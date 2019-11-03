@@ -22,6 +22,7 @@ The Thinking Cap is based off of a Muse 2014 headset, at this point.
 ![Windows fail](https://github.com/Toruitas/thinkingcap/blob/master/img/wk1/windows-sdk-fail.JPG)
 8. + Linux SDK version still works. 
 9. - Arduino won't talk to Linux at all. Sometimes it will connect for a mere moment, but then disappear from the ports.
+10. + Further testing with the Muse app has shown that while actively having a dialogue with a reading, I tend to have a baseline in the Neutral area. Not Active, not Calm. While doing something more physical and immediate, such as removing a pesky fly from my airspace or going to get a water, it scores me in the Calm region. Good datapoints, if a bit vague since I can't link it to my own data processing yet.
 
 ## Week 2 (2019/11/4 - 2019/11/10):
 ### Challenge: Get Linux to recognize the Arduino, so the Muse and Arduino can pass info. Getting Windows to talk to the Muse seems a more difficult task.
