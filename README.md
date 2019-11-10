@@ -26,5 +26,18 @@ The Thinking Cap is based off of a Muse 2014 headset, at this point.
 
 ## Week 2 (2019/11/4 - 2019/11/10):
 ### Challenge: Get Linux to recognize the Arduino, so the Muse and Arduino can pass info. Getting Windows to talk to the Muse seems a more difficult task.
+1. + Tested with the Muse app further, while doing different activities. Contrary to my expectations, playing Zelda didn't elevate my readings to Active, even when solving puzzles. The game is familiar since I've played through it before, but the puzzle's solution I've since forgotten. This still confuses my hypothesis that Active is the area to watch.
+2. - Arduino stopped talking to Windows, too. Likely as a result of trying to upload a Sketch via Ubuntu.
+3. + Thanks to [this thread](https://forum.arduino.cc/index.php?topic=153674.0) I was able to get the Arduino back in action using Windows.
+4. + Thanks to [this StackExchange Answer](https://arduino.stackexchange.com/questions/61359/avrdude-error-butterfly-programmer-uses-avr-write-page-but-does-not-provide) I was able to chase down a very annoying bug with Ubuntu that prevented serial ports from being properly assigned to the Arduino in Ubuntu.
+5. + Combined with #4, by changing the programmer to the same as in Windows (Ubuntu has a different default), I was ablt to write a sketch from Ubuntu to Linux. 
+6. + Both devices talk to Linux. Can proceed with the meat.
+7. + I started to configure the headset's data transfer protocols. The Muse connects via Bluetooth, which is received by a server running on my machine. The server then streams the data to a charting program, which takes in the 200+ parameters and plots them according to a configuration file. The charting program is buggy since it's old, with plots going off the charts. It's a start.
+To do: add images
+8. + Sketched out how the various inputs/outputs could be mounted on the top hat.
+To do: add images
+9. + Sketched systems diagram for the device.
+To do: add images
 
-
+## Week 3 (2019/11/11 - 2019/11/17):
+### Challenge: Finalize awareness detection metrics. Finalize design. Order components.
