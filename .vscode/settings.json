@@ -1,3 +1,6 @@
 {
-    "python.pythonPath": "D:\\Users\\torui\\Anaconda3\\envs\\thinkingcap\\python.exe"
+    "python.pythonPath": "C:\\Users\\torui\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\thinkingcap-py3.7\\Scripts\\python.exe",
+    "python.venvFolders": [
+        "C:\\Users\\torui\\AppData\\Local\\pypoetry\\Cache\\virtualenvs"
+    ]
 }

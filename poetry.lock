@@ -1,0 +1,14 @@
+[[package]]
+category = "main"
+description = "Python Serial Port Extension"
+name = "pyserial"
+optional = false
+python-versions = "*"
+version = "3.4"
+
+[metadata]
+content-hash = "4a7226c84bce71e7eebd6000e00e7756e4a2556db2b01586d7ef0ec9e1277ecf"
+python-versions = "^3.7"
+
+[metadata.hashes]
+pyserial = ["6e2d401fdee0eab996cf734e67773a0143b932772ca8b42451440cfed942c627", "e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"]
