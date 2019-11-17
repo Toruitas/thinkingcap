@@ -33,11 +33,35 @@ The Thinking Cap is based off of a Muse 2014 headset, at this point.
 5. + Combined with #4, by changing the programmer to the same as in Windows (Ubuntu has a different default), I was ablt to write a sketch from Ubuntu to Linux. 
 6. + Both devices talk to Linux. Can proceed with the meat.
 7. + I started to configure the headset's data transfer protocols. The Muse connects via Bluetooth, which is received by a server running on my machine. The server then streams the data to a charting program, which takes in the 200+ parameters and plots them according to a configuration file. The charting program is buggy since it's old, with plots going off the charts. It's a start.
-To do: add images
+![Console output](https://github.com/Toruitas/pcomp/blob/master/img/wk2/10_console.JPG)
+![Brainwaves](https://github.com/Toruitas/pcomp/blob/master/img/wk2/9_brainwaves.JPG)
 8. + Sketched out how the various inputs/outputs could be mounted on the top hat.
-To do: add images
-9. + Sketched systems diagram for the device.
-To do: add images
+![Sketch](https://github.com/Toruitas/pcomp/blob/master/img/wk2/1_sketch.JPG)
+
+![Sketch](https://github.com/Toruitas/pcomp/blob/master/img/wk2/2_sketch.JPG)
+
+![Sketch](https://github.com/Toruitas/pcomp/blob/master/img/wk2/3_sketch.JPG)
+
+![Sketch](https://github.com/Toruitas/pcomp/blob/master/img/wk2/4_sketch.JPG)
+
+![Sketch](https://github.com/Toruitas/pcomp/blob/master/img/wk2/5_sketch.JPG)
+
+![Sketch](https://github.com/Toruitas/pcomp/blob/master/img/wk2/6_sketch.JPG)
+
+![Sketch](https://github.com/Toruitas/pcomp/blob/master/img/wk2/7_sketch.JPG)
+9. + Sketched systems diagram for the device. Todo: digitize properly for legibility.
+![Systems diagram](https://github.com/Toruitas/pcomp/blob/master/img/wk2/8_systems_diagram.JPG)
 
 ## Week 3 (2019/11/11 - 2019/11/17):
-### Challenge: Finalize awareness detection metrics. Finalize design. Order components.
+### Challenge: Order components. Get various bits and bobs controlled by the head (Arduino) and tail (Python)
+1. + Add feature to the hat: Senses when it is being worn.
+2. + Ordered hat, vibrators, and IR emitters/sensors as well as a 1m LED light strip. Qutie surprised I was unable to source a secondhand top hat after Halloween.
+3. + Received vibrators and IR emitters/sensors
+![Vibrators](https://github.com/Toruitas/pcomp/blob/master/img/wk3/0_vibes.JPG)
+![IR pairs](https://github.com/Toruitas/pcomp/blob/master/img/wk3/3_IR_pairs.JPG)
+4. + Working with the vibrators, created the beginnings of the communications systems between the Arduino for local control and Python over serial on my machine. 
+5. + Can control Focus or Non-focused states from either end.
+[![Python controlling vibration over serial](https://github.com/Toruitas/pcomp/blob/master/img/wk3/2_testing_vibe.JPG)](https://youtu.be/wEGplzu93aM "Physical Computing - Wk7 - Lab 1")
+6. - Still waiting on hat and LEDs to arrive. 
+7. - First time connecting a vibrator to the Arduino, it vibrated so hard that it tore its own wiring out. Luckily I bought 3 and only need 2. Still, not ideal to lose the spare so early. Will have to securely mount the wiring and vibrator so that the vibrations are transferred to the hat, and the vibrator doesn't move at all within its mounting.
+![Broken vibe](https://github.com/Toruitas/pcomp/blob/master/img/wk3/1_broken_vibe.JPG)
