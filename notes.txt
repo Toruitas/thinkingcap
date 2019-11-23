@@ -1,1 +1,2 @@
-C:\Users\torui\AppData\Local\pypoetry\Cache\virtualenvs\thinkingcap-py3.7
+C:\Users\username\AppData\Local\pypoetry\Cache\virtualenvs\thinkingcap-py3.7
+~/.cache/pypoetry/virtualenvs/thinkingcap-wqXZLuGR-py3.7

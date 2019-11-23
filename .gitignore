@@ -1,2 +1,5 @@
 .environment
 __pycache__/*
+.vscode/*
+.idea/*
+creds.txt*

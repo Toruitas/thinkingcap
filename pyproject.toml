@@ -1,13 +1,11 @@
 [tool.poetry]
 name = "thinkingcap"
 version = "0.1.0"
-description = "Pcomp 2019 final project."
-authors = ["Stuart Leitch <Toruitas@gmail.com>"]
-license = "MIT"
+description = ""
+authors = ["Stuart Leitch <toruitas@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-pyserial = "^3.4"
 
 [tool.poetry.dev-dependencies]
 
