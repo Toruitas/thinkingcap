@@ -1,7 +1,58 @@
-package = []
+[[package]]
+category = "main"
+description = "enum/enum34 compatibility package"
+name = "enum-compat"
+optional = false
+python-versions = "*"
+version = "0.0.3"
+
+[[package]]
+category = "main"
+description = "Python Bluetooth LE (Low Energy) and GATT Library"
+name = "pygatt"
+optional = false
+python-versions = "*"
+version = "4.0.5"
+
+[package.dependencies]
+enum-compat = "*"
+pyserial = "*"
+
+[package.extras]
+GATTTOOL = ["pexpect"]
+
+[[package]]
+category = "main"
+description = "Python Serial Port Extension"
+name = "pyserial"
+optional = false
+python-versions = "*"
+version = "3.4"
+
+[[package]]
+category = "main"
+description = "Open Sound Control server and client implementations in pure Python"
+name = "python-osc"
+optional = false
+python-versions = "*"
+version = "1.7.4"
 
 [metadata]
-content-hash = "ae1f216c71b9b712a5c479d19bf075b718c35d9248fd89cb1eb7624528ec5ad1"
-python-versions = "^3.6"
+content-hash = "69bc9c659f1b71ff47ce2d4ff42125a72b4d4a77a2e048e1f79e7bb4b6061c38"
+python-versions = "^3.7"
 
 [metadata.files]
+enum-compat = [
+    {file = "enum-compat-0.0.3.tar.gz", hash = "sha256:3677daabed56a6f724451d585662253d8fb4e5569845aafa8bb0da36b1a8751e"},
+    {file = "enum_compat-0.0.3-py3-none-any.whl", hash = "sha256:88091b617c7fc3bbbceae50db5958023c48dc40b50520005aa3bf27f8f7ea157"},
+]
+pygatt = [
+    {file = "pygatt-4.0.5.tar.gz", hash = "sha256:7f4e0ec72f03533a3ef5fdd532f08d30ab7149213495e531d0f6580e9fcb1a7d"},
+]
+pyserial = [
+    {file = "pyserial-3.4-py2.py3-none-any.whl", hash = "sha256:e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"},
+    {file = "pyserial-3.4.tar.gz", hash = "sha256:6e2d401fdee0eab996cf734e67773a0143b932772ca8b42451440cfed942c627"},
+]
+python-osc = [
+    {file = "python-osc-1.7.4.tar.gz", hash = "sha256:760f9d7a8c586a5347eb309336df08b308892cc6ca558b0874e7594bcb07d032"},
+]

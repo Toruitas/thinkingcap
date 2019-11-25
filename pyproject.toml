@@ -6,6 +6,8 @@ authors = ["Stuart Leitch <toruitas@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+pygatt = "^4.0.5"
+python-osc = "^1.7.4"
 
 [tool.poetry.dev-dependencies]
 
