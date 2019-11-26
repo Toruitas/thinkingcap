@@ -1,10 +1,45 @@
 [[package]]
 category = "main"
+description = "Python library for interacting with Bluefruit LE (Bluetooth low energy) devices on Linux or OSX."
+name = "adafruit-bluefruitle"
+optional = false
+python-versions = "*"
+version = "0.9.10"
+
+[package.dependencies]
+future = "*"
+
+[[package]]
+category = "main"
+description = "Python bindings for libdbus"
+name = "dbus-python"
+optional = false
+python-versions = "*"
+version = "1.2.12"
+
+[[package]]
+category = "main"
 description = "enum/enum34 compatibility package"
 name = "enum-compat"
 optional = false
 python-versions = "*"
 version = "0.0.3"
+
+[[package]]
+category = "main"
+description = "Clean single-source support for Python 3 and 2"
+name = "future"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "0.18.2"
+
+[[package]]
+category = "main"
+description = "Python interface for cairo"
+name = "pycairo"
+optional = false
+python-versions = "*"
+version = "1.18.2"
 
 [[package]]
 category = "main"
@@ -23,6 +58,17 @@ GATTTOOL = ["pexpect"]
 
 [[package]]
 category = "main"
+description = "Python bindings for GObject Introspection"
+name = "pygobject"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+version = "3.34.0"
+
+[package.dependencies]
+pycairo = ">=1.11.1"
+
+[[package]]
+category = "main"
 description = "Python Serial Port Extension"
 name = "pyserial"
 optional = false
@@ -38,16 +84,31 @@ python-versions = "*"
 version = "1.7.4"
 
 [metadata]
-content-hash = "69bc9c659f1b71ff47ce2d4ff42125a72b4d4a77a2e048e1f79e7bb4b6061c38"
+content-hash = "0a40894ce8b225e6f8bb3603a770ba4a2896617aa0abb9272019b87a92e80526"
 python-versions = "^3.7"
 
 [metadata.files]
+adafruit-bluefruitle = [
+    {file = "Adafruit_BluefruitLE-0.9.10.tar.gz", hash = "sha256:0343a20ea49a262087c14382dd29814896e2dd60ddd9d89319a2c674ec6b6bd8"},
+]
+dbus-python = [
+    {file = "dbus-python-1.2.12.tar.gz", hash = "sha256:cdd4de2c4f5e58f287b12013ed7b41dee81d503c8d0d2397c5bd2fb01badf260"},
+]
 enum-compat = [
     {file = "enum-compat-0.0.3.tar.gz", hash = "sha256:3677daabed56a6f724451d585662253d8fb4e5569845aafa8bb0da36b1a8751e"},
     {file = "enum_compat-0.0.3-py3-none-any.whl", hash = "sha256:88091b617c7fc3bbbceae50db5958023c48dc40b50520005aa3bf27f8f7ea157"},
 ]
+future = [
+    {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
+]
+pycairo = [
+    {file = "pycairo-1.18.2.tar.gz", hash = "sha256:dcb853fd020729516e8828ad364084e752327d4cff8505d20b13504b32b16531"},
+]
 pygatt = [
     {file = "pygatt-4.0.5.tar.gz", hash = "sha256:7f4e0ec72f03533a3ef5fdd532f08d30ab7149213495e531d0f6580e9fcb1a7d"},
+]
+pygobject = [
+    {file = "PyGObject-3.34.0.tar.gz", hash = "sha256:2acb0daf2b3a23a90f52066cc23d1053339fee2f5f7f4275f8baa3704ae0c543"},
 ]
 pyserial = [
     {file = "pyserial-3.4-py2.py3-none-any.whl", hash = "sha256:e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"},

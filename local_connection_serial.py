@@ -7,7 +7,7 @@ import asyncio
 import time
 from contextvars import ContextVar
 
-# Arduino constants
+# Arduino constants for dev
 ARD_PORT = "/dev/ttyACM0" # COM3 or /dev/ttyACM0
 # Osc server constants
 IP = "127.0.0.1"
@@ -17,11 +17,12 @@ OSC_PORT = 5005
 focused = ContextVar("focused", default=False)  # focused = False
 wearing = ContextVar("wearing", default=False)  # wearing = False
 running = ContextVar("running", default=True)  # running = True
+attention_lvl = ContextVar("attn", default=0.0)  # for storing the current level of attention
 
 
 def eeg_handler(unused_addr, args, ch1, ch2, ch3, ch4):
     """
-    Handles raw electrical data handed over from the 4 electrodes.
+    Handles raw electrical data handed over from the 4 electrodes. Not needed in current version.
     :param unused_addr:
     :param args:
     :param ch1: Left ear
@@ -41,12 +42,14 @@ def concentration_handler(unused_addr, args, concentration):
     :param concentration: values of concentration
     :return:
     """
+
     print("Current attention level: ", concentration)
 
 async def loop1():
     for i in range(10):
         print(f"Loop {i}")
         await asyncio.sleep(1)
+
 
 async def loop(ser):
     # ser = serial.Serial(ARD_PORT, baudrate=9600, timeout=1)  # timeout 1 second. This resets the Ard when it connects.
