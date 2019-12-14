@@ -67,6 +67,10 @@ async def loop(ser):
             running.set(False)   # shut it down on next loop
             ser.write(b'x')  # o for off.
 
+def update_state():
+    # https://stackoverflow.com/questions/26838953/python-read-from-serial-port-and-encode-as-json
+    pass
+
 
 async def init_main():
     """

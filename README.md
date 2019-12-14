@@ -72,6 +72,18 @@ The Thinking Cap is based off of a Muse 2014 headset, at this point.
 2. (+) Introduced to the Bluefruit BLE device. Plan to use this instead of the Arduino for true wireless.
 
 
+## Week ? (2019/12/9 - 2019/12/15)"
+### Challenge: Infrared sensor.
+1. (-) Tested the battery with the Bluefruit. It blew up the Bluefruit. Maybe the polarity was reversed? Bought 2 more.
+One replacement. One backup. Also bought a battery straight from Adafruit. Good thing I'm headed to the USA to pick them up.
+Also good that I still have the Leonardo.
+2. (+) Registered the Slack App. 
+3. (-) IR distance sensor not working to my liking. Purchased 2 more to test.
+4. (+) The Neopixel at least turns on with the 9v battery. I don't dare use the one that fried the Bluefruit.
+5. (=) Since the replacement Bluefruits won't reach me until next week, proceeding to develop the server further with only Serial and OSC.
+6. (=) Idea. Since I have the potentiometer, maybe I can use that to control the brightness of the LED. 
+https://www.instructables.com/id/Arduino-Potentiometer-Analog-Input-Tinkercad/ https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use
+
 How-to turn the Thinking Cap on:
 1. Turn the Muse on by pressing the Circular on/off button.
 2. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
