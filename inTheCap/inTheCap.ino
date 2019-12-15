@@ -1,6 +1,9 @@
+#include <ArduinoJson.h>
+
+
 int VIBEPIN_1 = 2;
 int LEDPIN = 8;
-int OVERRIDEPIN = 9;
+int OVERRIDEPIN = 7;
 int IRPIN = 10; 
 int TIME_BETWEEN_UPDATES = 100;  // ms. How long between measurements to report back to the server.
 bool focused = false;
@@ -10,11 +13,18 @@ bool wearing_prev = false;
 bool hatRunning = false;
 bool hatRunning_prev = false;
 bool syncState = true;
-unsigned long startTime = 0;  // timestamp to measure against w/ currentTime
-unsigned long currentTime = 0;  // timestamp which helps track elapsed time w/ startTime
-char updateString = "";
 bool userOverride = false;
 bool btnPressed = false;
+bool btnPressed_prev = false;
+unsigned long startTime = 0;  // timestamp to measure against w/ currentTime
+unsigned long currentTime = 0;  // timestamp which helps track elapsed time w/ startTime
+
+String updateServerString = "";
+String updateFromServerString = "";
+
+StaticJsonDocument<3> sendToServerDoc;
+StaticJsonDocument<256> receiveFromServerDoc;
+
 
 void setup() {
   pinMode(VIBEPIN_1, OUTPUT);  // set up the piezos-controlling pin.
@@ -25,7 +35,9 @@ void setup() {
   Serial.begin(9600);
   delay(100);
   if (Serial.available()){
+    Serial.println();
     Serial.write("Thinking cap connected");
+    hatRunning = true;
   }
   startTime = millis();  // set the first timer.
 }
@@ -66,8 +78,14 @@ void sendState(){
   // https://www.daniweb.com/programming/software-development/threads/108931/how-to-insert-variables-into-string-with-sign
   // http://www.cplusplus.com/reference/cstdio/sprintf/
   if (Serial.available()){
-    sprintf(updateString,"{'focused':'%c','wearing':'%c','userOverride':'%c'}",focused, wearing, userOverride);
-    Serial.write(updateString);
+    sendToServerDoc[focused].set(focused);
+    sendToServerDoc[wearing].set(sendToServerDoc);
+    sendToServerDoc[userOverride].set(sendToServerDoc);
+    serializeJson(sendToServerDoc, updateServerString);
+    
+    // sprintf(updateServerString,"{\"focused\":%c,\"wearing\":%c,\"userOverride\":%c,}",focused, wearing, userOverride);
+    // Serial.write(updateServerString);
+    Serial.println(updateServerString);
   }
 }
 
@@ -75,8 +93,35 @@ void readState(){
   // This fn copies a state update from the server to the local Arduino environment.
   // The server ONLY sends a message if the Thinking cap state changes. 
   // Focused or Not.
+  // https://www.youtube.com/watch?v=iuHxPQB6Rx4 for JSON parsing info. 
   if (Serial.available()){
-    Serial.read();
+    updateFromServerString = Serial.readString();
+
+    // load updateFromServerString into the JSON doc receiveFromServerDoc
+    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
+    
+    // if parsing failed
+    if(err){
+      Serial.println("Error");
+      return;
+    // if it succeeded
+    }else{
+      // update focused state
+      focused = receiveFromServerDoc["focused"];
+      // new focused state. 
+      if(focused && !focused_prev){
+        focused_prev = focused;
+        // color = "red" on Neopixel
+      // new un-focused state
+      }else if(!focused && focused_prev){
+        focused_prev = focused;
+        // color = "green" on Neopixel.
+      // focused state unchanged.
+      }else{
+        // if the state matches, reset the override. Not necessary anymore. 
+        userOverride = false;
+      }
+    }
   }
 }
 
@@ -96,24 +141,24 @@ void updateLEDS(){
 }
 
 void readOverride(){
-  userOverride = digitalRead(OVERRIDEPIN);
-  if(userOverride){
-    // user pressed the button. Toggle the state.
-    if (userOverride != btnPressed){  // if this is the first time the button is pressed, it will be different than btn_pressed
-      wearing = !wearing;
-      wearing_prev = !wearing_prev;
-    }
-    btnPressed = true;  // set the button to true to show that the button is still being pressed. This will cause userOverride == btn_pressed. State won't change.
-    
+  // Reads the button for overriding. 
+  btnPressed = digitalRead(OVERRIDEPIN);
+  // user pressed the button. Toggle the state.
+  if (btnPressed != btnPressed_prev && btnPressed){  // if this is the first time the button is pressed, it will be different than btn_pressed
+    // User pressed the button freshly. Toggle the state.
+    focused = !focused;  // 
+    focused_prev = !focused_prev;
+    userOverride = true;  // overriding, 
+    btnPressed_prev = true;  // store this press for comparison..
   }else{ 
-    btnPressed = false;
+    btnPressed_prev = false;  // store this non-press for comparison.
   }
 }
 
 void loop(){
   // set wearing using IR
   //readWearing();
-  wearing = true;  // todo: remove this line
+  wearing = true;  // todo: remove this line and uncomment the above
   if(wearing){
       // See if there's an override. Yes, only if the hat is being worn. 
       readOverride();
@@ -122,6 +167,7 @@ void loop(){
         // Determine if we should send the state to the server.
         currentTime = millis();
         if((currentTime-startTime)  > TIME_BETWEEN_UPDATES){
+          readState();
           sendState();
           startTime = currentTime;
         }
