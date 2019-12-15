@@ -60,7 +60,6 @@ async def loop1():
 
 
 async def loop(ser):
-    # ser = serial.Serial(ARD_PORT, baudrate=9600, timeout=1)  # timeout 1 second. This resets the Ard when it connects.
 
     while hat_running.get():
         # user_input = input('Test control of Arduino? f for focus; anything else to quit.')
@@ -75,7 +74,8 @@ async def loop(ser):
         #     hat_running.set(False)   # shut it down on next loop
         #     ser.write(b'x')  # o for off.
 
-        state = ser.read()
+        state = ser.readline()
+        state = str(state)
         if state:
             # connection made, update the variables
             update_server_state(state)
@@ -92,6 +92,7 @@ def update_server_state(state: str) -> dict:
     :return: dict object of the state
     """
     # https://stackoverflow.com/questions/26838953/python-read-from-serial-port-and-encode-as-json
+    print(state)
     state = json.loads(state)
 
     hat_running.set(True)
@@ -114,12 +115,13 @@ def update_server_state(state: str) -> dict:
 def update_client_state(ser):
     """
     Update the Arduino client.
+    https://stackoverflow.com/questions/22275079/pyserial-write-wont-take-my-string
     :return:
     """
     state = context_vars_to_state_dict()
     state_json = json.dumps(state)  # dump to a JSON string
 
-    ser.write(state_json)  # maybe need bytestring
+    ser.write(state_json.encode())  # encode
     # Log to the console
     print("Client state updated to: ")
     print(state_json)
@@ -148,8 +150,9 @@ def make_connection(ser):
     :param ser:
     :return: True if connected
     """
+    print("making a connection")
     while not hat_running.get():
-        state = ser.read()
+        state = ser.readline()
         if state:
             # connection made, update the variables
             update_server_state(state)

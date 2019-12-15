@@ -22,8 +22,8 @@ unsigned long currentTime = 0;  // timestamp which helps track elapsed time w/ s
 String updateServerString = "";
 String updateFromServerString = "";
 
-StaticJsonDocument<3> sendToServerDoc;
-StaticJsonDocument<256> receiveFromServerDoc;
+StaticJsonDocument<JSON_OBJECT_SIZE(3)> sendToServerDoc;
+StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
 
 
 void setup() {
@@ -34,11 +34,8 @@ void setup() {
   
   Serial.begin(9600);
   delay(100);
-  if (Serial.available()){
-    Serial.println();
-    Serial.write("Thinking cap connected");
-    hatRunning = true;
-  }
+  hatRunning = true;
+  
   startTime = millis();  // set the first timer.
 }
 
@@ -77,16 +74,23 @@ void sendState(){
   // The states will be changed as appropriate during the regular loop.
   // https://www.daniweb.com/programming/software-development/threads/108931/how-to-insert-variables-into-string-with-sign
   // http://www.cplusplus.com/reference/cstdio/sprintf/
-  if (Serial.available()){
-    sendToServerDoc[focused].set(focused);
-    sendToServerDoc[wearing].set(sendToServerDoc);
-    sendToServerDoc[userOverride].set(sendToServerDoc);
-    serializeJson(sendToServerDoc, updateServerString);
-    
-    // sprintf(updateServerString,"{\"focused\":%c,\"wearing\":%c,\"userOverride\":%c,}",focused, wearing, userOverride);
-    // Serial.write(updateServerString);
-    Serial.println(updateServerString);
-  }
+  // https://arduinojson.org/v6/doc/serialization/
+//  sendToServerDoc[focused].set(focused);
+//  sendToServerDoc[wearing].set(wearing);
+//  sendToServerDoc[userOverride].set(userOverride);
+  sendToServerDoc["focused"]=focused;
+  sendToServerDoc["wearing"]=wearing;
+  sendToServerDoc["userOverride"]=userOverride;
+//  updateServerString = "";
+//  serializeJson(sendToServerDoc, updateServerString);
+//  serializeJson(sendToServerDoc, Serial);
+  
+  // sprintf(updateServerString,"{\"focused\":%c,\"wearing\":%c,\"userOverride\":%c,}",focused, wearing, userOverride);
+  // Serial.write(updateServerString);
+  // Cast the JsonVariant to a string
+  updateServerString = ""+sendToServerDoc.as<String>();
+  Serial.println(updateServerString);
+  
 }
 
 void readState(){
@@ -162,15 +166,14 @@ void loop(){
   if(wearing){
       // See if there's an override. Yes, only if the hat is being worn. 
       readOverride();
-
       if(syncState){
         // Determine if we should send the state to the server.
         currentTime = millis();
         if((currentTime-startTime)  > TIME_BETWEEN_UPDATES){
-          readState();
           sendState();
           startTime = currentTime;
         }
+        readState();
       }
   }
   
