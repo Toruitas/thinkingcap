@@ -83,7 +83,7 @@ async def loop(ser):
         await asyncio.sleep(.1)
 
 
-def update_server_state(state: str) -> dict:
+def update_server_state(state: str):
     """
     Takes a new state from the Ard and mirrors it on this server.
     Uses set.state since we're in async land
@@ -91,23 +91,31 @@ def update_server_state(state: str) -> dict:
     :return: dict object of the state
     """
     # https://stackoverflow.com/questions/26838953/python-read-from-serial-port-and-encode-as-json
-    state = json.loads(state)
+    try:
+        state = json.loads(state)
+    except json.decoder.JSONDecodeError as error:
+        print(state)  # this just prints whatever the message actually is
+        return False  # early return to prevent the rest of the fn from running
 
-    hat_running.set(True)
-    connected.set(True)
-    focused.set(state["focused"])
-    wearing.set(state["wearing"])
-    user_override.set(state["userOverride"])
-    last_reading.set(datetime.datetime.now())
+    if type(state) == dict:
+        hat_running.set(True)
+        connected.set(True)
 
-    state_dict = context_vars_to_state_dict()
+        focused.set(state["focused"])
+        wearing.set(state["wearing"])
+        user_override.set(state["userOverride"])
+        last_reading.set(datetime.datetime.now())
 
-    # log the update to the console
-    print("Server state updated to: ")
-    print(state_dict)
+        state_dict = context_vars_to_state_dict()
 
-    # no real reason to return, but doing anyway
-    return state_dict
+        # log the update to the console
+        print("Server state updated to: ")
+        print(state_dict)
+
+        # no real reason to return, but doing anyway
+        return state_dict
+    else:
+        print(state)
 
 
 def update_client_state(ser):
@@ -153,8 +161,9 @@ def make_connection(ser):
         state = ser.readline()
         if state:
             # connection made, update the variables
-            update_server_state(state)
-            print("Connected to Thinking Cap. Don't let your dreams be dreams!")
+            updated = update_server_state(state)
+            if updated:
+                print("Connected to Thinking Cap. Don't let your dreams be dreams!")
             return True
         # if timeout todo: make a timeout here for connections.
 

@@ -29,7 +29,7 @@ StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
 void setup() {
   pinMode(VIBEPIN_1, OUTPUT);  // set up the piezos-controlling pin.
   pinMode(LEDPIN, OUTPUT);  // set up the LED strip data pin.
-  pinMode(OVERRIDEPIN, INPUT);  // manual override. 
+  pinMode(OVERRIDEPIN, INPUT_PULLUP);  // manual override. 
   pinMode(IRPIN, INPUT);  // Infrared sensor pin. 
   
   Serial.begin(9600);
@@ -89,8 +89,7 @@ void sendState(){
   // Serial.write(updateServerString);
   // Cast the JsonVariant to a string
   updateServerString = ""+sendToServerDoc.as<String>();
-  Serial.println(updateServerString);
-  
+  Serial.println(updateServerString);  
 }
 
 void readState(){
@@ -147,15 +146,16 @@ void updateLEDS(){
 void readOverride(){
   // Reads the button for overriding. 
   btnPressed = digitalRead(OVERRIDEPIN);
+//  Serial.println(btnPressed);
   // user pressed the button. Toggle the state.
-  if (btnPressed != btnPressed_prev && btnPressed){  // if this is the first time the button is pressed, it will be different than btn_pressed
+  if (btnPressed != btnPressed_prev && btnPressed==HIGH){  // if this is the first time the button is pressed, it will be different than btn_pressed
     // User pressed the button freshly. Toggle the state.
     focused = !focused;  // 
     focused_prev = !focused_prev;
     userOverride = true;  // overriding, 
-    btnPressed_prev = true;  // store this press for comparison..
+    btnPressed_prev = btnPressed;  // store this press for comparison.
   }else{ 
-    btnPressed_prev = false;  // store this non-press for comparison.
+    btnPressed_prev = btnPressed;  // store this non-press for comparison.
   }
 }
 
