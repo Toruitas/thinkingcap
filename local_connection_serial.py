@@ -75,13 +75,12 @@ async def loop(ser):
         #     ser.write(b'x')  # o for off.
 
         state = ser.readline()
-        state = str(state)
         if state:
             # connection made, update the variables
             update_server_state(state)
         else:
             update_client_state(ser)
-        await asyncio.sleep(50)
+        await asyncio.sleep(.1)
 
 
 def update_server_state(state: str) -> dict:
@@ -92,14 +91,13 @@ def update_server_state(state: str) -> dict:
     :return: dict object of the state
     """
     # https://stackoverflow.com/questions/26838953/python-read-from-serial-port-and-encode-as-json
-    print(state)
     state = json.loads(state)
 
     hat_running.set(True)
     connected.set(True)
     focused.set(state["focused"])
     wearing.set(state["wearing"])
-    user_override.set(state["user_override"])
+    user_override.set(state["userOverride"])
     last_reading.set(datetime.datetime.now())
 
     state_dict = context_vars_to_state_dict()
