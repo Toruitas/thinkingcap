@@ -68,6 +68,12 @@ void setup() {
 // The challenge here is to Keep the state synced between the two.
 // 
 
+void vibrate(){
+  digitalWrite(VIBEPIN_1, HIGH);
+  delay(100);
+  digitalWrite(VIBEPIN_1, LOW);
+}
+
 void sendState(){
   // This fn sends the current local environment state of the Arduino to the server.
   // Will be sent every TIME_BETWEEN_MEASUREMENTS: calclated as: (currentTime-startTime)  > TIME_BETWEEN_MEASUREMENTS in the main loop
@@ -75,21 +81,14 @@ void sendState(){
   // https://www.daniweb.com/programming/software-development/threads/108931/how-to-insert-variables-into-string-with-sign
   // http://www.cplusplus.com/reference/cstdio/sprintf/
   // https://arduinojson.org/v6/doc/serialization/
-//  sendToServerDoc[focused].set(focused);
-//  sendToServerDoc[wearing].set(wearing);
-//  sendToServerDoc[userOverride].set(userOverride);
-  sendToServerDoc["focused"]=focused;
-  sendToServerDoc["wearing"]=wearing;
-  sendToServerDoc["userOverride"]=userOverride;
-//  updateServerString = "";
-//  serializeJson(sendToServerDoc, updateServerString);
-//  serializeJson(sendToServerDoc, Serial);
   
-  // sprintf(updateServerString,"{\"focused\":%c,\"wearing\":%c,\"userOverride\":%c,}",focused, wearing, userOverride);
-  // Serial.write(updateServerString);
-  // Cast the JsonVariant to a string
+  sendToServerDoc["focused"].set(focused);
+  sendToServerDoc["wearing"].set(wearing);
+  sendToServerDoc["userOverride"].set(userOverride);
+  
+  // Cast the JsonVariant to a string and send it over serial.
   updateServerString = ""+sendToServerDoc.as<String>();
-  Serial.println(updateServerString);  
+  Serial.println(updateServerString);
 }
 
 void readState(){
@@ -114,10 +113,13 @@ void readState(){
       // new focused state. 
       if(focused && !focused_prev){
         focused_prev = focused;
+        userOverride = false;  // override 
+        vibrate();
         // color = "red" on Neopixel
       // new un-focused state
       }else if(!focused && focused_prev){
         focused_prev = focused;
+        vibrate();
         // color = "green" on Neopixel.
       // focused state unchanged.
       }else{

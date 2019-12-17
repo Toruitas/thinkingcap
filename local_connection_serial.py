@@ -17,6 +17,8 @@ OSC_PORT = 5005
 
 # Context Vars work great with asyncio
 focused = ContextVar("focused", default=False)  # focused = False
+# since focused can be overriden, true focus state is stored in a separate var
+mentally_focused = ContextVar("mentally_focused", default=False)
 wearing = ContextVar("wearing", default=False)  # wearing = False
 hat_running = ContextVar("hat_running", default=False)  # running = True
 user_override = ContextVar("user_override", default=False)  # user_override = False
@@ -48,9 +50,15 @@ def concentration_handler(unused_addr, args, concentration):
     :return:
     """
     print("Current attention level: ", concentration)
-    if concentration >= 0.5:
-        focused.set(True)
+    if concentration >= 0.5 and mentally_focused.get() is False:
+        mentally_focused.set(True)
+        if not user_override.get():
+            focused.set(True)
         print("Focused, you bad mofo, you. Look at that.")
+    else:
+        mentally_focused.set(False)
+        if not user_override.get():
+            focused.set(False)
 
 
 async def loop1():
@@ -138,8 +146,10 @@ def context_vars_to_state_dict() -> dict:
     Convenience fn to turn the context variables into a dictionary,
     :return:
     """
+    # print(mentally_focused.get())
     state_dict = {
         "focused": focused.get(),
+        "mentally_focused": mentally_focused.get(),
         "wearing": wearing.get(),
         "hat_running": hat_running.get(),
         "connected": connected.get(),
@@ -182,17 +192,14 @@ async def init_main():
     connection_made = make_connection(ser)
 
     if connection_made:
-
         # with the connection made and inital state set, can start the main loops.
-
         dispatcher = Dispatcher()
         dispatcher.map("/muse/elements/experimental/concentration", concentration_handler, "Concentration")
-
-        # creates a server that's Async.
+        # creates an OSC server that's Async.
         server = osc_server.AsyncIOOSCUDPServer((IP, OSC_PORT), dispatcher, asyncio.get_event_loop())
         transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
 
-        await loop(ser)  # Enter main loop of program. This runs and the transport also runs.
+        await loop(ser)  # Enter main loop of program.
 
         transport.close()  # Clean up serve endpoint
 
@@ -225,22 +232,4 @@ asyncio.run(init_main())
 #         (args.ip, args.port), dispatcher)
 #     print("Serving on {}".format(server.server_address))
 #     server.serve_forever()
-
-
-# if __name__ == "__main__":
-#     ser = serial.Serial(ARD_PORT, baudrate = 9600, timeout=1)  # timeout 1 second. This resets the Ard when it connects.
-#
-#     while running:
-#         user_input = input('Test control of Arduino? f for focus; anything else to quit.')
-#
-#         if user_input == 'f':
-#             # This should change "focused" to true here and on the Ard.
-#             # Through setting "focused" on the Ard, it will vibrate, light up, etc.
-#             focused = True
-#             ser.write(b'f')
-#
-#         if user_input != 'f':
-#             running = False  # shut it down on next loop
-#             ser.write(b'x')  # o for off.
-
 

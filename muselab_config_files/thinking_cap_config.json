@@ -11,53 +11,7 @@
     ]
   },
   "Outgoing OSC Config": {
-    "Forwarding": [
-      {
-        "Hostname": "Host",
-        "IP Address": "127.0.0.1",
-        "Port": 5005,
-        "Forwarded Messages": {
-          "Is Forwarding All": true,
-          "Forwarded Messages": [
-            "/muse/elements/gamma_session_score",
-            "/muse/version",
-            "/muse/elements/alpha_session_score",
-            "/muse/config",
-            "/muse/elements/gamma_relative",
-            "/muse/elements/alpha_relative",
-            "/muse/elements/theta_session_score",
-            "/muse/elements/raw_fft3",
-            "/muse/elements/delta_relative",
-            "/muse/batt",
-            "/muse/elements/raw_fft2",
-            "/muse/elements/alpha_absolute",
-            "/muse/elements/beta_relative",
-            "/muse/elements/delta_absolute",
-            "/muse/elements/is_good",
-            "/muse/elements/gamma_absolute",
-            "/muse/elements/raw_fft1",
-            "/muse/eeg/quantization",
-            "/muse/eeg",
-            "/muse/elements/raw_fft0",
-            "/muse/elements/low_freqs_absolute",
-            "/muse/elements/experimental/mellow",
-            "/muse/elements/beta_absolute",
-            "/muse/elements/theta_absolute",
-            "/muse/elements/touching_forehead",
-            "/muse/acc",
-            "/muse/elements/experimental/concentration",
-            "/muse/elements/theta_relative",
-            "/muse/elements/delta_session_score",
-            "/muse/elements/jaw_clench",
-            "/muse/drlref",
-            "/muse/elements/blink",
-            "/muse/elements/beta_session_score",
-            "/muse/elements/horseshoe"
-          ]
-        },
-        "TCP": false
-      }
-    ]
+    "Forwarding": []
   },
   "DSP Config": {
     "DSP Function Settings": [],
@@ -118,43 +72,6 @@
       "Signal Type": "GROUP",
       "Signal": {
         "Base": {
-          "Colour": "White",
-          "Label": "/muse/drlref"
-        },
-        "IDs": [
-          {
-            "Signal Type": "OSC",
-            "Signal": {
-              "Base": {
-                "Colour": "Green",
-                "Label": "/muse/drlref (0)"
-              },
-              "Signal Source": "/muse/drlref",
-              "Index": 0,
-              "Port": 5000,
-              "TCP": false
-            }
-          },
-          {
-            "Signal Type": "OSC",
-            "Signal": {
-              "Base": {
-                "Colour": "Green Yellow",
-                "Label": "/muse/drlref (1)"
-              },
-              "Signal Source": "/muse/drlref",
-              "Index": 1,
-              "Port": 5000,
-              "TCP": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "Signal Type": "GROUP",
-      "Signal": {
-        "Base": {
           "Colour": "Green",
           "Label": "/muse/eeg"
         },
@@ -163,7 +80,7 @@
             "Signal Type": "OSC",
             "Signal": {
               "Base": {
-                "Colour": "Light Blue",
+                "Colour": "Green",
                 "Label": "/muse/eeg (0)"
               },
               "Signal Source": "/muse/eeg",
@@ -176,7 +93,7 @@
             "Signal Type": "OSC",
             "Signal": {
               "Base": {
-                "Colour": "Light Cyan",
+                "Colour": "Green Yellow",
                 "Label": "/muse/eeg (1)"
               },
               "Signal Source": "/muse/eeg",
@@ -189,7 +106,7 @@
             "Signal Type": "OSC",
             "Signal": {
               "Base": {
-                "Colour": "Light Green",
+                "Colour": "Khaki",
                 "Label": "/muse/eeg (2)"
               },
               "Signal Source": "/muse/eeg",
@@ -202,11 +119,48 @@
             "Signal Type": "OSC",
             "Signal": {
               "Base": {
-                "Colour": "Light Salmon",
+                "Colour": "Light Blue",
                 "Label": "/muse/eeg (3)"
               },
               "Signal Source": "/muse/eeg",
               "Index": 3,
+              "Port": 5000,
+              "TCP": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Signal Type": "GROUP",
+      "Signal": {
+        "Base": {
+          "Colour": "White",
+          "Label": "/muse/drlref"
+        },
+        "IDs": [
+          {
+            "Signal Type": "OSC",
+            "Signal": {
+              "Base": {
+                "Colour": "Light Green",
+                "Label": "/muse/drlref (0)"
+              },
+              "Signal Source": "/muse/drlref",
+              "Index": 0,
+              "Port": 5000,
+              "TCP": false
+            }
+          },
+          {
+            "Signal Type": "OSC",
+            "Signal": {
+              "Base": {
+                "Colour": "Light Salmon",
+                "Label": "/muse/drlref (1)"
+              },
+              "Signal Source": "/muse/drlref",
+              "Index": 1,
               "Port": 5000,
               "TCP": false
             }
@@ -7526,82 +7480,6 @@
               },
               "Signal Source": "/muse/elements/low_freqs_absolute",
               "Index": 3,
-              "Port": 5000,
-              "TCP": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "Signal Type": "GROUP",
-      "Signal": {
-        "Base": {
-          "Colour": "Purple",
-          "Label": "Waves"
-        },
-        "IDs": [
-          {
-            "Signal Type": "OSC",
-            "Signal": {
-              "Base": {
-                "Colour": "Blue",
-                "Label": "Alpha"
-              },
-              "Signal Source": "/muse/elements/alpha_absolute",
-              "Index": 0,
-              "Port": 5000,
-              "TCP": false
-            }
-          },
-          {
-            "Signal Type": "OSC",
-            "Signal": {
-              "Base": {
-                "Colour": "Green",
-                "Label": "Beta"
-              },
-              "Signal Source": "/muse/elements/beta_absolute",
-              "Index": 0,
-              "Port": 5000,
-              "TCP": false
-            }
-          },
-          {
-            "Signal Type": "OSC",
-            "Signal": {
-              "Base": {
-                "Colour": "Red",
-                "Label": "Delta"
-              },
-              "Signal Source": "/muse/elements/delta_absolute",
-              "Index": 0,
-              "Port": 5000,
-              "TCP": false
-            }
-          },
-          {
-            "Signal Type": "OSC",
-            "Signal": {
-              "Base": {
-                "Colour": "Orange",
-                "Label": "Gamma"
-              },
-              "Signal Source": "/muse/elements/gamma_absolute",
-              "Index": 0,
-              "Port": 5000,
-              "TCP": false
-            }
-          },
-          {
-            "Signal Type": "OSC",
-            "Signal": {
-              "Base": {
-                "Colour": "Purple",
-                "Label": "Theta"
-              },
-              "Signal Source": "/muse/elements/theta_absolute",
-              "Index": 0,
               "Port": 5000,
               "TCP": false
             }
@@ -15578,6 +15456,19 @@
               "Port": 5000,
               "TCP": false
             }
+          },
+          {
+            "Signal Type": "OSC",
+            "Signal": {
+              "Base": {
+                "Colour": "Light Green",
+                "Label": "/muse/elements/experimental/mellow (1)"
+              },
+              "Signal Source": "/muse/elements/experimental/mellow",
+              "Index": 1,
+              "Port": 5000,
+              "TCP": false
+            }
           }
         ]
       }
@@ -15587,9 +15478,9 @@
     {
       "Visualizer Type": "Scrolling Line Graph",
       "Visualizer Settings": {
-        "Label": "Concentration ",
-        "Max Amplitude": 1.0,
-        "Min Amplitude": -0.5,
+        "Label": "Raw EEG ",
+        "Max Amplitude": 1250.0,
+        "Min Amplitude": -1250.0,
         "Override Master Time": false,
         "Time Range": 10000000000,
         "Spread Signals Apart": true,
@@ -15600,11 +15491,62 @@
               "Signal Type": "OSC",
               "Signal": {
                 "Base": {
-                  "Colour": "Cyan",
-                  "Label": "/muse/elements/experimental/concentration (0)"
+                  "Colour": "Green",
+                  "Label": "/muse/eeg (0)"
                 },
-                "Signal Source": "/muse/elements/experimental/concentration",
+                "Signal Source": "/muse/eeg",
                 "Index": 0,
+                "Port": 5000,
+                "TCP": false
+              }
+            },
+            "Zeroed": true,
+            "Assuming Uniform Rate": true
+          },
+          {
+            "Signal": {
+              "Signal Type": "OSC",
+              "Signal": {
+                "Base": {
+                  "Colour": "Light Blue",
+                  "Label": "/muse/eeg (3)"
+                },
+                "Signal Source": "/muse/eeg",
+                "Index": 3,
+                "Port": 5000,
+                "TCP": false
+              }
+            },
+            "Zeroed": true,
+            "Assuming Uniform Rate": true
+          },
+          {
+            "Signal": {
+              "Signal Type": "OSC",
+              "Signal": {
+                "Base": {
+                  "Colour": "Green Yellow",
+                  "Label": "/muse/eeg (1)"
+                },
+                "Signal Source": "/muse/eeg",
+                "Index": 1,
+                "Port": 5000,
+                "TCP": false
+              }
+            },
+            "Zeroed": true,
+            "Assuming Uniform Rate": true
+          },
+          {
+            "Signal": {
+              "Signal Type": "OSC",
+              "Signal": {
+                "Base": {
+                  "Colour": "Khaki",
+                  "Label": "/muse/eeg (2)"
+                },
+                "Signal Source": "/muse/eeg",
+                "Index": 2,
                 "Port": 5000,
                 "TCP": false
               }
@@ -15717,9 +15659,9 @@
     {
       "Visualizer Type": "Scrolling Line Graph",
       "Visualizer Settings": {
-        "Label": "Raw EEG ",
-        "Max Amplitude": 1250.0,
-        "Min Amplitude": -1250.0,
+        "Label": "Concentration",
+        "Max Amplitude": 1.0,
+        "Min Amplitude": -0.5,
         "Override Master Time": false,
         "Time Range": 10000000000,
         "Spread Signals Apart": true,
@@ -15730,61 +15672,10 @@
               "Signal Type": "OSC",
               "Signal": {
                 "Base": {
-                  "Colour": "Light Green",
-                  "Label": "/muse/eeg (2)"
+                  "Colour": "Cyan",
+                  "Label": "/muse/elements/experimental/concentration (0)"
                 },
-                "Signal Source": "/muse/eeg",
-                "Index": 2,
-                "Port": 5000,
-                "TCP": false
-              }
-            },
-            "Zeroed": true,
-            "Assuming Uniform Rate": true
-          },
-          {
-            "Signal": {
-              "Signal Type": "OSC",
-              "Signal": {
-                "Base": {
-                  "Colour": "Light Cyan",
-                  "Label": "/muse/eeg (1)"
-                },
-                "Signal Source": "/muse/eeg",
-                "Index": 1,
-                "Port": 5000,
-                "TCP": false
-              }
-            },
-            "Zeroed": true,
-            "Assuming Uniform Rate": true
-          },
-          {
-            "Signal": {
-              "Signal Type": "OSC",
-              "Signal": {
-                "Base": {
-                  "Colour": "Light Salmon",
-                  "Label": "/muse/eeg (3)"
-                },
-                "Signal Source": "/muse/eeg",
-                "Index": 3,
-                "Port": 5000,
-                "TCP": false
-              }
-            },
-            "Zeroed": true,
-            "Assuming Uniform Rate": true
-          },
-          {
-            "Signal": {
-              "Signal Type": "OSC",
-              "Signal": {
-                "Base": {
-                  "Colour": "Light Blue",
-                  "Label": "/muse/eeg (0)"
-                },
-                "Signal Source": "/muse/eeg",
+                "Signal Source": "/muse/elements/experimental/concentration",
                 "Index": 0,
                 "Port": 5000,
                 "TCP": false
@@ -15796,7 +15687,6 @@
         ]
       }
     }
-
   ],
   "Marker": {
     "Markings": [
