@@ -88,7 +88,6 @@ https://www.instructables.com/id/Arduino-Potentiometer-Analog-Input-Tinkercad/ h
 ### Challenge: Finish the syncing of state between focus and unfocused && the EEG reader and Arduino
 1. (+) Bluefruit replacements arrive. Adafruit themselves now also have them in stock. Turns out, I didn't even need to pay $50 each... ah that's life.
 2. (+) Finalized User Override button functionality on Ard. 
-    todo: image here. 
 3. (+) Finalized state sharing between Arduino and Machine
 4. (+) Finalized EEG reader Concentration reading. Effectively, this means that now the EEG reader can control the Focused state on the Arduino - and thus all the lights etc. Server-side code is essentially done now.
 5. (+) First new IR sensor has arrived. This is the better of the two. 

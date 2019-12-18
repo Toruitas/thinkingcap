@@ -15,6 +15,7 @@ ARD_PORT = "/dev/ttyACM0" # COM3 or /dev/ttyACM0
 IP = "127.0.0.1"
 OSC_PORT = 5005
 
+# https://docs.python.org/3.7/library/contextvars.html
 # Context Vars work great with asyncio
 focused = ContextVar("focused", default=False)  # focused = False
 # since focused can be overriden, true focus state is stored in a separate var
@@ -28,23 +29,10 @@ attention_lvl = ContextVar("attn", default=0.0)  # for storing the current level
 
 
 
-def eeg_handler(unused_addr, args, ch1, ch2, ch3, ch4):
-    """
-    Handles raw electrical data handed over from the 4 electrodes. Not needed in current version.
-    :param unused_addr:
-    :param args:
-    :param ch1: Left ear
-    :param ch2: Left forehead
-    :param ch3: Right forehead
-    :param ch4: Right ear
-    :return:
-    """
-    print("EEG (uV) per channel: ", ch1, ch2, ch3, ch4)
-
-
 def concentration_handler(unused_addr:str, fixed_argument, concentration):
     """
     This is called every time data comes in by the OSC dispatcher.
+    https://python-osc.readthedocs.io/en/latest/dispatcher.html
     :param unused_addr: the given address that's associated with this "view"
     :param args: anything extra
     :param concentration: values of concentration
@@ -69,19 +57,13 @@ def concentration_handler(unused_addr:str, fixed_argument, concentration):
         a_s.mentally_focused = True
         if not a_s.user_override:
             a_s.focused = a_s.mentally_focused
-        print("Focused, you bad mofo, you. Look at that.")
+        # print("Focused, you bad mofo, you. Look at that.")
         # return a_s.mentally_focused
     else:
         a_s.mentally_focused = False
         if not a_s.user_override:
             a_s.focused = a_s.mentally_focused
         # return a_s.mentally_focused
-
-
-async def loop1():
-    for i in range(10):
-        print(f"Loop {i}")
-        await asyncio.sleep(1)
 
 
 async def loop(ser, async_state):
@@ -214,13 +196,14 @@ def make_connection(ser, async_state):
 
 async def init_main():
     """
-    https://docs.python.org/3.7/library/contextvars.html
+
     https://python-osc.readthedocs.io/en/latest/server.html#async-server
     https://web.archive.org/web/20170809181820/http://developer.choosemuse.com/research-tools-example/grabbing-data-from-museio-a-few-simple-examples-of-muse-osc-servers
-
+    https://addshore.com/2018/06/python3-using-some-shared-state-in-2-async-methods/
     :return:
     """
     # making a super ghetto state to share b/w the two async contexts
+    # based on solution in https://addshore.com/2018/06/python3-using-some-shared-state-in-2-async-methods/
     async_state = type('', (), {})()
     async_state.focused = False
     async_state.mentally_focused = False
@@ -237,6 +220,8 @@ async def init_main():
 
     if connection_made:
         # with the connection made and inital state set, can start the main loops.
+        # https://python-osc.readthedocs.io/en/latest/dispatcher.html
+        # https://python-osc.readthedocs.io/en/latest/server.html#async-server
         event_loop_local = asyncio.get_event_loop()
         dispatcher = Dispatcher()
         dispatcher.map("/muse/elements/experimental/concentration", concentration_handler, async_state)
@@ -251,31 +236,3 @@ async def init_main():
 event_loop = asyncio.new_event_loop()
 asyncio.set_event_loop(event_loop)
 asyncio.run(init_main())
-
-
-# def eeg_process(on:bool):
-#     """
-#
-#     :param on:
-#     :return:
-#     """
-#     # parser = argparse.ArgumentParser()
-#     # parser.add_argument("--ip",
-#     #                     default="127.0.0.1",
-#     #                     help="The ip to listen on")
-#     # parser.add_argument("--port",
-#     #                     type=int,
-#     #                     default=5000,
-#     #                     help="The port to listen on")
-#     # args = parser.parse_args()
-#
-#     dispatcher = Dispatcher()
-#     dispatcher.map("/debug", print)
-#     # dispatcher.map("/muse/eeg", eeg_handler, "EEG")
-#     dispatcher.map("/muse/elements/experimental/concentration", eeg_handler, "EEG")
-#
-#     server = osc_server.AsyncIOOSCUDPServer(
-#         (args.ip, args.port), dispatcher)
-#     print("Serving on {}".format(server.server_address))
-#     server.serve_forever()
-
