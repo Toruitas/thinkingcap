@@ -72,7 +72,7 @@ The Thinking Cap is based off of a Muse 2014 headset, at this point.
 2. (+) Introduced to the Bluefruit BLE device. Plan to use this instead of the Arduino for true wireless.
 
 
-## Week ? (2019/12/9 - 2019/12/15)"
+## Week ? (2019/12/9 - 2019/12/15)
 ### Challenge: Infrared sensor.
 1. (-) Tested the battery with the Bluefruit. It blew up the Bluefruit. Maybe the polarity was reversed? Bought 2 more.
 One replacement. One backup. Also bought a battery straight from Adafruit. Good thing I'm headed to the USA to pick them up.
@@ -83,6 +83,15 @@ Also good that I still have the Leonardo.
 5. (=) Since the replacement Bluefruits won't reach me until next week, proceeding to develop the server further with only Serial and OSC.
 6. (=) Idea. Since I have the potentiometer, maybe I can use that to control the brightness of the LED. 
 https://www.instructables.com/id/Arduino-Potentiometer-Analog-Input-Tinkercad/ https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use
+
+## Week ?? (2019/12/16 - 2019/12/23)
+### Challenge: Finish the syncing of state between focus and unfocused && the EEG reader and Arduino
+1. (+) Bluefruit replacements arrive. Adafruit themselves now also have them in stock. Turns out, I didn't even need to pay $50 each... ah that's life.
+2. (+) Finalized User Override button functionality on Ard. 
+    todo: image here. 
+3. (+) Finalized state sharing between Arduino and Machine
+4. (+) Finalized EEG reader Concentration reading. Effectively, this means that now the EEG reader can control the Focused state on the Arduino - and thus all the lights etc. Server-side code is essentially done now.
+5. (+) First new IR sensor has arrived. This is the better of the two. 
 
 How-to turn the Thinking Cap on:
 1. Turn the Muse on by pressing the Circular on/off button.
