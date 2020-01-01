@@ -104,8 +104,10 @@ Christmas break
 ### Challenge: Get IR reader functional
 1. (+) Third kind of IR sensor arrived.
 2. (+) Located nRF52 Bluefruit Feather open source circuit diagrams for Eagle on GitHub: [https://github.com/adafruit/Adafruit-nRF52-Bluefruit-Feather-PCB](https://github.com/adafruit/Adafruit-nRF52-Bluefruit-Feather-PCB)
-3. (+) Comparison between the 2 batteries confirmed that the Adafruit-sold LiPo battery has flipped polarity compared to the CoolComponents one. This is what fried the first Bluefruit.
+3. (+) Comparison between the 2 batteries confirmed that the Adafruit-sold LiPo battery has flipped polarity compared to the CoolComponents one. This is what fried the first Bluefruit. I will re-do the wiring and use it to independently power the Neopixel. I'm not sure which battery is "incorrect."
 4. (+) First circuit drawn on Eagle. The override button! ![First circ](img/wk9/0_first_circ.png)
+5. (+) The Sharp IR sensor works well enough. It's meant to work on 5v, but it does get accurate enough readings on 3.3v to suit my purposes. 
+6. (+) Added IR sensor to Eagle schematic. ![Second circ](img/wk9/1_IR_sensor.png)
 
 
 How-to turn the Thinking Cap on:
