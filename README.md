@@ -68,11 +68,16 @@ The Thinking Cap is based off of a Muse 2014 headset, at this point.
 
 ## Week 3 (2019/11/18 - 2019/11/24):
 ### Challenge: Make an OSC server receive the output from the Muse headband's attention measurement.
-1. (+) Final components the hat and LEDs have arrived. Hat was smashed but "reflated" quite well.
-2. (+) Introduced to the Bluefruit BLE device. Plan to use this instead of the Arduino for true wireless.
+1. (+) The hat and LEDs have arrived. Hat was smashed but "reflated" quite well.
+2. (+) Introduced to the Adafruit Feather Bluefruit nRF52840 BLE device. Plan to use this instead of the Leonardo for true wireless.
 
+## Week 4 (2019/11/25 - 2019/12/1):
+null
 
-## Week ? (2019/12/9 - 2019/12/15)
+## Week 5 (2019/12/2 - 2019/12/8):
+null
+
+## Week 6 (2019/12/9 - 2019/12/15):
 ### Challenge: Infrared sensor.
 1. (-) Tested the battery with the Bluefruit. It blew up the Bluefruit. Maybe the polarity was reversed? Bought 2 more.
 One replacement. One backup. Also bought a battery straight from Adafruit. Good thing I'm headed to the USA to pick them up.
@@ -84,7 +89,7 @@ Also good that I still have the Leonardo.
 6. (=) Idea. Since I have the potentiometer, maybe I can use that to control the brightness of the LED. 
 https://www.instructables.com/id/Arduino-Potentiometer-Analog-Input-Tinkercad/ https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use
 
-## Week ?? (2019/12/16 - 2019/12/23)
+## Week 7 (2019/12/16 - 2019/12/22):
 ### Challenge: Finish the syncing of state between focus and unfocused && the EEG reader and Arduino
 1. (+) Bluefruit replacements arrive. Adafruit themselves now also have them in stock. Turns out, I didn't even need to pay $50 each... ah that's life.
 2. (+) Finalized User Override button functionality on Ard. 
@@ -92,9 +97,21 @@ https://www.instructables.com/id/Arduino-Potentiometer-Analog-Input-Tinkercad/ h
 4. (+) Finalized EEG reader Concentration reading. Effectively, this means that now the EEG reader can control the Focused state on the Arduino - and thus all the lights etc. Server-side code is essentially done now.
 5. (+) First new IR sensor has arrived. This is the better of the two. 
 
+## Week 8 (2019/12/23 - 2019/12/29)
+Christmas break
+
+## Week 9 (2019/12/30 - 2020/1/5):
+### Challenge: Get IR reader functional
+1. (+) Third kind of IR sensor arrived.
+2. (+) Located nRF52 Bluefruit Feather open source circuit diagrams for Eagle on GitHub: [https://github.com/adafruit/Adafruit-nRF52-Bluefruit-Feather-PCB](https://github.com/adafruit/Adafruit-nRF52-Bluefruit-Feather-PCB)
+3. (+) Comparison between the 2 batteries confirmed that the Adafruit-sold LiPo battery has flipped polarity compared to the CoolComponents one. This is what fried the first Bluefruit.
+4. (+) First circuit drawn on Eagle. The override button! ![First circ](img/wk9/0_first_circ.png)
+
+
 How-to turn the Thinking Cap on:
 1. Turn the Muse on by pressing the Circular on/off button.
 2. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
 3. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
 3a. Add --preset 14 if using the preset 14 configuration file (or any other.)
+
