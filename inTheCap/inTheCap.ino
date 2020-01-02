@@ -1,10 +1,11 @@
 #include <ArduinoJson.h>
-
+#include <SharpIR.h>
 
 int VIBEPIN_1 = 2;
 int LEDPIN = 8;
 int OVERRIDEPIN = 7;
-int IRPIN = 10; 
+#define IR A0 // define signal pin
+#define model 1080 // used 1080 because model GP2Y0A21YK0F is used
 int TIME_BETWEEN_UPDATES = 100;  // ms. How long between measurements to report back to the server.
 bool focused = false;
 bool focused_prev = false;
@@ -30,7 +31,6 @@ void setup() {
   pinMode(VIBEPIN_1, OUTPUT);  // set up the piezos-controlling pin.
   pinMode(LEDPIN, OUTPUT);  // set up the LED strip data pin.
   pinMode(OVERRIDEPIN, INPUT_PULLUP);  // manual override. 
-  pinMode(IRPIN, INPUT);  // Infrared sensor pin. 
   
   Serial.begin(9600);
   delay(100);
@@ -133,11 +133,12 @@ void readState(){
 void readWearing(){
   // Depending on stability of the sensor, may have to put this into an array. Get 3 readings over a certain amount of time to mean something.
   // Likely have to compensate some for "adjusting the hat" for comfort? 
-    if(digitalRead(IRPIN)==HIGH){
-      wearing = HIGH;
-    }else{
-      wearing = LOW;
-    }
+  int dis=SharpIR.distance();
+  if(dis<14){
+    wearing = true;
+  }else{
+    wearing = false;
+  }
 }
 
 void updateLEDS(){
@@ -163,8 +164,7 @@ void readOverride(){
 
 void loop(){
   // set wearing using IR
-  //readWearing();
-  wearing = true;  // todo: remove this line and uncomment the above
+  readWearing();
   if(wearing){
       // See if there's an override. Yes, only if the hat is being worn. 
       readOverride();
