@@ -9,6 +9,15 @@ The "Thinking Cap" is meant to be an attention-preservation device. It is a brai
 
 The Thinking Cap is based off of a Muse 2014 headset.
 
+## How to use:
+How-to turn the Thinking Cap on:
+1. Turn the Muse on by pressing the Circular on/off button.
+2. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
+    Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
+3. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
+3a. Add --preset 14 if using the preset 14 configuration file (or any other.)
+
+
 ## Components used:
 1. Adafruit Feather Bluefruit nRF52840 - 1
 2. 
@@ -79,7 +88,7 @@ The Thinking Cap is based off of a Muse 2014 headset.
 null
 
 ## Week 5 (2019/12/2 - 2019/12/8):
-null
+1. (+) Test the fit of the Muse and the tophat. It's actually a better fit with the tophat than without. ![Test fit](img/wk5/0_muse_fit.JPG)
 
 ## Week 6 (2019/12/9 - 2019/12/15):
 ### Challenge: Infrared sensor.
@@ -99,7 +108,7 @@ https://www.instructables.com/id/Arduino-Potentiometer-Analog-Input-Tinkercad/ h
 2. (+) Finalized User Override button functionality on Ard. 
 3. (+) Finalized state sharing between Arduino and Machine
 4. (+) Finalized EEG reader Concentration reading. Effectively, this means that now the EEG reader can control the Focused state on the Arduino - and thus all the lights etc. Server-side code is essentially done now.
-5. (+) First new IR sensor has arrived. This is the better of the two. 
+5. (+) First new IR sensor has arrived. This is the better of the two. ![new IR](img/wk7/0_new_IR_sensor.JPG)
 
 ## Week 8 (2019/12/23 - 2019/12/29)
 Christmas break
@@ -112,12 +121,4 @@ Christmas break
 4. (+) First circuit drawn on Eagle. The override button! ![First circ](img/wk9/0_first_circ.png)
 5. (+) The Sharp IR sensor works well enough. It's meant to work on 5v, but it does get accurate enough readings on 3.3v to suit my purposes. Plus it has nice mounting holes for screws.
 6. (+) Added IR sensor to Eagle schematic. ![Second circ](img/wk9/1_IR_sensor.png)
-
-
-How-to turn the Thinking Cap on:
-1. Turn the Muse on by pressing the Circular on/off button.
-2. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
-    Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
-3. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
-3a. Add --preset 14 if using the preset 14 configuration file (or any other.)
 
