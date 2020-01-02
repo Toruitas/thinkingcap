@@ -26,6 +26,8 @@ String updateFromServerString = "";
 StaticJsonDocument<JSON_OBJECT_SIZE(3)> sendToServerDoc;
 StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
 
+SharpIR SharpIR(IR, model);
+
 
 void setup() {
   pinMode(VIBEPIN_1, OUTPUT);  // set up the piezos-controlling pin.
@@ -133,8 +135,14 @@ void readState(){
 void readWearing(){
   // Depending on stability of the sensor, may have to put this into an array. Get 3 readings over a certain amount of time to mean something.
   // Likely have to compensate some for "adjusting the hat" for comfort? 
+
+  // wearing is the leading indicator, so on the next loop, update wearing_prev to indicate continued wearing.
+  if (wearing != wearing_prev){
+    wearing_prev = wearing;
+  }
+  
   int dis=SharpIR.distance();
-  if(dis<14){
+  if(dis<14 && dis>0){
     wearing = true;
   }else{
     wearing = false;
@@ -144,6 +152,8 @@ void readWearing(){
 void updateLEDS(){
   // update the lights. Lights always on as long as the hat is being worn. Defaults to green for "please talk to me" just for more theatrics. Gotta see the change!
   // LEDPIN
+  // lights turn on if worn, turn off if not.
+  // brightness determined by the dial. 
 }
 
 void readOverride(){
@@ -163,20 +173,18 @@ void readOverride(){
 }
 
 void loop(){
-  // set wearing using IR
+  // set wearing using IR. 
   readWearing();
-  if(wearing){
-      // See if there's an override. Yes, only if the hat is being worn. 
-      readOverride();
-      if(syncState){
-        // Determine if we should send the state to the server.
-        currentTime = millis();
-        if((currentTime-startTime)  > TIME_BETWEEN_UPDATES){
-          sendState();
-          startTime = currentTime;
-        }
-        readState();
-      }
+  // See if there's an override. Yes, only if the hat is being worn. 
+  readOverride();
+  if(syncState){
+    // Determine if we should send the state to the server.
+    currentTime = millis();
+    if((currentTime-startTime)  > TIME_BETWEEN_UPDATES){
+      sendState();
+      startTime = currentTime;
+    }
+    readState();
   }
   
 }

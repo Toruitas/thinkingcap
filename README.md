@@ -20,7 +20,7 @@ How-to turn the Thinking Cap on:
 
 ## Components used:
 1. Adafruit Feather Bluefruit nRF52840 - 1
-2. 
+2. GP2Y0A21YK0F SHARP IR Analog Distance Sensor (10-80cm) - 1
 
 ## Week 1 (2019/10/28 - 2019/11/3):
 ### Challenge: Get Arduino and Muse talking to each other.
