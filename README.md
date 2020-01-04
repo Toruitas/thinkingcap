@@ -125,3 +125,4 @@ Christmas break
 8. (-) Discover that the LiPo battery, despite its size, doesn't supply enough juice to color all the green LEDs I need. Have to rely on the 9V battery. It is, of course, very bright now.
 9. (+) Added the Neopixels circuit to the Eagle diagram.
 10. (+) Created a dimmer switch for the LEDs, using a potentiometer. Added to circuit diagram. 
+[![Adapixels with dimmer](img/wk9/2_LED_with_dimmer.JPG)](https://youtu.be/gZUIdcbmYeM)
