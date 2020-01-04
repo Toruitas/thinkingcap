@@ -3,12 +3,8 @@
 #include <Adafruit_NeoPixel.h>
 
 int VIBEPIN_1 = 2;
-int LED_PIN = 6;
-int LED_COUNT = 36;
-int LED_BRIGHTNESS = 200; //0-255
-int LED_MAX_BRIGHTNESS = 255;
 int OVERRIDEPIN = 7;
-#define IR A0 // define signal pin
+#define IR A0 // define signal pin for infrared
 #define model 1080 // used 1080 because model GP2Y0A21YK0F is used
 int TIME_BETWEEN_UPDATES = 100;  // ms. How long between measurements to report back to the server.
 bool focused = false;
@@ -25,10 +21,12 @@ unsigned long startTime = 0;  // timestamp to measure against w/ currentTime
 unsigned long currentTime = 0;  // timestamp which helps track elapsed time w/ startTime
 
 // LED variables
+int LED_PIN = 6;
+int LED_COUNT = 36;
 unsigned long ledStartTime = 0;
 unsigned long ledCurrentTime = 0;
 int SystemMinBrightness = 0;       //value 0-255 
-int UserMaxBrightness = 255;      //value 0-255--equation (maxBrightness*maxBrightness/255) hence maxBrightness^2/255 hence the value 170 actually equal to 113.33333 .
+double UserMaxBrightness = 255;      //value 0-255--equation (maxBrightness*maxBrightness/255) hence maxBrightness^2/255 hence the value 170 actually equal to 113.33333 .
 int SystemMaxBrightness = 255;
 int currentBrightness = 127.5;
 int fadeInWait = 5;          //lighting up speed, steps.
@@ -36,6 +34,11 @@ int fadeOutWait = 10;         //dimming speed, steps.
 bool fadingIn = true;
 bool updateLEDs = false;
 
+// potentiometer settings for determining maximum brightness for LEDs
+#define potPin A5  // Analog!
+int potReading = 0;
+
+// 
 String updateServerString = "";
 String updateFromServerString = "";
 
@@ -145,30 +148,6 @@ void readWearing(){
   }
 }
 
-void updateLEDS(){
-  // update the lights. Lights always on as long as the hat is being worn. Defaults to green for "please talk to me" just for more theatrics. Gotta see the change!
-  // LEDPIN
-  // lights turn on if worn, turn off if not.
-  // brightness determined by the potentiometer. 
-  // https://forum.arduino.cc/index.php?topic=434825.0 or https://forums.adafruit.com/viewtopic.php?t=41143 for code on the brightness
-  // I especially like the idea of using sine/cosine to modulate it. 
-  // https://learn.adafruit.com/multi-tasking-the-arduino-part-3/fader
-
-  if (!wearing){
-    
-  }
-
-  
-  // if brightness>max_brightness, brightness = max_brightness
-  // for pixel in strip length
-  // if focused - color red
-  // else - color green
-  // different animations for red and green if I have time
-
-  // breathing animation:
-  // 
-}
-
 void fadeInOrOut(){
   // update the lights. Lights always on as long as the hat is being worn. Defaults to green for "please talk to me" just for more theatrics. Gotta see the change!
   // LEDPIN
@@ -205,12 +184,7 @@ void fadeInOrOut(){
         ledStartTime = millis();
       }
     }
-    
-//    strip.setBrightness(currentBrightness*(MaxBrightness/255));  // normalized for maxbrightness
-//    strip.fill(red, 0, LED_COUNT);
-//    for (int i=0;i<strip.numPixels();i++){
-//          strip.setPixelColor(i,red);
-//        }
+
 
     // it's maximally bright, time to fade out
     if(currentBrightness >= SystemMaxBrightness){
@@ -238,6 +212,13 @@ void fadeInOrOut(){
   }
 }
 
+void readMaxBrightness(){
+  // Gets the setting of the potentiometer, which determines how high the maximum brightness of the LEDs are
+  // References here: https://learn.adafruit.com/adafruit-arduino-lesson-8-analog-inputs/arduino-code & https://www.arduino.cc/en/Tutorial/AnalogReadSerial
+  potReading  = analogRead(potPin);  // 0-1023 for 5v, 0-654 for 3.3v
+  UserMaxBrightness = floor(potReading/(654.0/255.0));  // 1023/255.0 for 5v
+}
+
 void readOverride(){
   // Reads the button for overriding. 
   btnPressed = digitalRead(OVERRIDEPIN);
@@ -245,6 +226,7 @@ void readOverride(){
   // user pressed the button. Toggle the state.
   if (btnPressed != btnPressed_prev && btnPressed==HIGH){  // if this is the first time the button is pressed, it will be different than btn_pressed
     // User pressed the button freshly. Toggle the state.
+    // Do I need a debounce time?
     focused = !focused;  // 
     focused_prev = !focused_prev;
     userOverride = true;  // overriding, 
@@ -257,9 +239,11 @@ void readOverride(){
 void loop(){
   // set wearing using IR. 
   readWearing();
-  // See if there's an override. Yes, only if the hat is being worn. 
+  // See if there's an override. Yes, only if the hat is being worn.
   readOverride();
   if(wearing){
+    // See if the user has adjusted max brightness
+    readMaxBrightness ()
     fadeInOrOut();
   }
   if(syncState){

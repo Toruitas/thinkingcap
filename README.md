@@ -122,5 +122,6 @@ Christmas break
 5. (+) The Sharp IR sensor works well enough. It's meant to work on 5v, but it does get accurate enough readings on 3.3v to suit my purposes. Plus it has nice mounting holes for screws.
 6. (+) Added IR sensor to Eagle schematic. ![Second circ](img/wk9/1_IR_sensor.png)
 7. (+) Complete the Neopixels breathing animation code. 
-8. (-) Discover that the LiPo battery, despite its size, doesn't supply enough juice to color all the green LEDs I need. Have to rely on the 9V battery. 
+8. (-) Discover that the LiPo battery, despite its size, doesn't supply enough juice to color all the green LEDs I need. Have to rely on the 9V battery. It is, of course, very bright now.
 9. (+) Added the Neopixels circuit to the Eagle diagram.
+10. (+) Created a dimmer switch for the LEDs, using a potentiometer. 
