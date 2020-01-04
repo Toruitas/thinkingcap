@@ -1,8 +1,12 @@
 #include <ArduinoJson.h>
 #include <SharpIR.h>
+#include <Adafruit_NeoPixel.h>
 
 int VIBEPIN_1 = 2;
-int LEDPIN = 8;
+int LED_PIN = 6;
+int LED_COUNT = 36;
+int LED_BRIGHTNESS = 200; //0-255
+int LED_MAX_BRIGHTNESS = 255;
 int OVERRIDEPIN = 7;
 #define IR A0 // define signal pin
 #define model 1080 // used 1080 because model GP2Y0A21YK0F is used
@@ -20,6 +24,18 @@ bool btnPressed_prev = false;
 unsigned long startTime = 0;  // timestamp to measure against w/ currentTime
 unsigned long currentTime = 0;  // timestamp which helps track elapsed time w/ startTime
 
+// LED variables
+unsigned long ledStartTime = 0;
+unsigned long ledCurrentTime = 0;
+int SystemMinBrightness = 0;       //value 0-255 
+int UserMaxBrightness = 255;      //value 0-255--equation (maxBrightness*maxBrightness/255) hence maxBrightness^2/255 hence the value 170 actually equal to 113.33333 .
+int SystemMaxBrightness = 255;
+int currentBrightness = 127.5;
+int fadeInWait = 5;          //lighting up speed, steps.
+int fadeOutWait = 10;         //dimming speed, steps.
+bool fadingIn = true;
+bool updateLEDs = false;
+
 String updateServerString = "";
 String updateFromServerString = "";
 
@@ -27,44 +43,23 @@ StaticJsonDocument<JSON_OBJECT_SIZE(3)> sendToServerDoc;
 StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
 
 SharpIR SharpIR(IR, model);
+Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);  // https://coolcomponents.co.uk/products/ws2815-digital-addressable-led-strip-60-leds-m-1m-adafruit-neopixel-compatible?variant=29496998264893
 
 
 void setup() {
   pinMode(VIBEPIN_1, OUTPUT);  // set up the piezos-controlling pin.
-  pinMode(LEDPIN, OUTPUT);  // set up the LED strip data pin.
+//  pinMode(LED_PIN, OUTPUT);  // set up the LED strip data pin.
   pinMode(OVERRIDEPIN, INPUT_PULLUP);  // manual override. 
   
   Serial.begin(9600);
   delay(100);
   hatRunning = true;
+
+  strip.begin();
+  strip.show();  // clear prior light settings
   
   startTime = millis();  // set the first timer.
 }
-
-// Tests setting Arduino from Python server
-//void loop() {
-//  if (Serial.available()){
-//    userInput = Serial.read();
-//
-//    if(userInput=='f'){
-//      focused = true;
-//      // Set the parts on the hat to turn on. 
-//      // Vibrate on.
-//      digitalWrite(VIBEPIN_1, HIGH);
-//      delay(100);
-//      digitalWrite(VIBEPIN_1, LOW);
-//      // Lights on. 
-//      // digitalWrite(LIGHTPIN_1, HIGH);
-//      Serial.println(focused);
-//    }
-//    if (userInput!='f'){
-//      focused = false;
-//      // turn everything off.
-//      digitalWrite(VIBEPIN_1, LOW);
-//      Serial.println(focused);
-//    }
-//  }
-//}
 
 // test sending info from Arduino to Python (should be over BLE, but that's tough right now)
 // The challenge here is to Keep the state synced between the two.
@@ -140,9 +135,10 @@ void readWearing(){
   if (wearing != wearing_prev){
     wearing_prev = wearing;
   }
-  
+
+  // Get the distance. If w/in 1-14cm, it should read as wearing. Why 1cm? 0 seems to fire frequently on bad readings. 
   int dis=SharpIR.distance();
-  if(dis<14 && dis>0){
+  if(dis<14 && dis>1){
     wearing = true;
   }else{
     wearing = false;
@@ -153,7 +149,93 @@ void updateLEDS(){
   // update the lights. Lights always on as long as the hat is being worn. Defaults to green for "please talk to me" just for more theatrics. Gotta see the change!
   // LEDPIN
   // lights turn on if worn, turn off if not.
-  // brightness determined by the dial. 
+  // brightness determined by the potentiometer. 
+  // https://forum.arduino.cc/index.php?topic=434825.0 or https://forums.adafruit.com/viewtopic.php?t=41143 for code on the brightness
+  // I especially like the idea of using sine/cosine to modulate it. 
+  // https://learn.adafruit.com/multi-tasking-the-arduino-part-3/fader
+
+  if (!wearing){
+    
+  }
+
+  
+  // if brightness>max_brightness, brightness = max_brightness
+  // for pixel in strip length
+  // if focused - color red
+  // else - color green
+  // different animations for red and green if I have time
+
+  // breathing animation:
+  // 
+}
+
+void fadeInOrOut(){
+  // update the lights. Lights always on as long as the hat is being worn. Defaults to green for "please talk to me" just for more theatrics. Gotta see the change!
+  // LEDPIN
+  // lights turn on if worn, turn off if not.
+  // brightness determined by the potentiometer. 
+  // https://forum.arduino.cc/index.php?topic=434825.0 or https://forums.adafruit.com/viewtopic.php?t=41143 for code on the brightness
+  // I especially like the idea of using sine/cosine to modulate it. However it's too subtle for these LEDs, after experimentation. 
+  // https://learn.adafruit.com/multi-tasking-the-arduino-part-3/fader
+  
+  updateLEDs = false;
+  
+  if(UserMaxBrightness>SystemMaxBrightness){
+    UserMaxBrightness = SystemMaxBrightness; // Just in case somehow the potentiometer controlling brightness gets readings higher than the LEDs can go  
+  }
+
+  if (UserMaxBrightness>0){
+    ledCurrentTime = millis();
+    // Fading in is faster than fading out
+    if(fadingIn){
+      // has enough time elapsed to do it?
+      if (ledCurrentTime - ledStartTime > fadeInWait){
+        updateLEDs = true;
+//        currentBrightness = currentBrightness + sin((currentBrightness/MaxBrightness)*M_PI);  // 0-1 PI will be values between 0 and +1.
+        currentBrightness = currentBrightness + 1;
+        ledStartTime = millis();  // update last time LEDs changed
+      }
+    }
+    // fading out
+    if(!fadingIn){
+      if (ledCurrentTime - ledStartTime > fadeOutWait){
+        updateLEDs = true;
+//        currentBrightness = currentBrightness - sin((currentBrightness/MaxBrightness)*M_PI);
+        currentBrightness = currentBrightness - 1;
+        ledStartTime = millis();
+      }
+    }
+    
+//    strip.setBrightness(currentBrightness*(MaxBrightness/255));  // normalized for maxbrightness
+//    strip.fill(red, 0, LED_COUNT);
+//    for (int i=0;i<strip.numPixels();i++){
+//          strip.setPixelColor(i,red);
+//        }
+
+    // it's maximally bright, time to fade out
+    if(currentBrightness >= SystemMaxBrightness){
+      fadingIn = false;
+      currentBrightness = SystemMaxBrightness;
+    }
+    // it's minimally dim, time to fade in.
+    if (currentBrightness <= SystemMinBrightness){
+      fadingIn = true;
+      currentBrightness = SystemMinBrightness;
+    }
+  }else{
+    currentBrightness = 0;
+  }
+
+  if(updateLEDs){
+    if(!focused){
+      strip.fill(strip.Color(0, strip.gamma8(floor(currentBrightness*(UserMaxBrightness/255))),0));  // green for hi there!
+    }else{
+      strip.fill(strip.Color(strip.gamma8(floor(currentBrightness*(UserMaxBrightness/255))),0,0)); // red for stay away
+    }    
+    strip.show();
+    Serial.println(currentBrightness*(UserMaxBrightness/255));
+    updateLEDs = false;
+  }
 }
 
 void readOverride(){
@@ -177,6 +259,9 @@ void loop(){
   readWearing();
   // See if there's an override. Yes, only if the hat is being worn. 
   readOverride();
+  if(wearing){
+    fadeInOrOut();
+  }
   if(syncState){
     // Determine if we should send the state to the server.
     currentTime = millis();
