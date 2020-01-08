@@ -2,7 +2,6 @@
 #include <SharpIR.h>
 #include <Adafruit_NeoPixel.h>
 
-int VIBEPIN_1 = 2;
 int OVERRIDEPIN = 7;
 #define IR A0 // define signal pin for infrared
 #define model 1080 // used 1080 because model GP2Y0A21YK0F is used
@@ -33,6 +32,12 @@ int fadeInWait = 5;          //lighting up speed, steps.
 int fadeOutWait = 10;         //dimming speed, steps.
 bool fadingIn = true;
 bool updateLEDs = false;
+
+// Vibrator settings
+int VIBEPIN_1 = 2;
+unsigned long vibeStartTime = 0;
+unsigned long vibeCurrentTime = 0;
+int vibeTime = 75; // ms for vibe to last
 
 // potentiometer settings for determining maximum brightness for LEDs
 #define potPin A5  // Analog!
@@ -69,9 +74,17 @@ void setup() {
 // 
 
 void vibrate(){
-  digitalWrite(VIBEPIN_1, HIGH);
-  delay(100);
-  digitalWrite(VIBEPIN_1, LOW);
+  // This runs when focus is detected.
+    digitalWrite(VIBEPIN_1, HIGH);
+    vibeStartTime = millis();
+}
+
+void stopvibrate(){
+  // This runs on every loop to catch any active vibrations.
+  vibeCurrentTime = millis();
+  if(vibeCurrentTime - vibeStartTime >= vibeTime){
+    digitalWrite(VIBEPIN_1, LOW);
+  }  
 }
 
 void sendState(){
@@ -241,9 +254,10 @@ void loop(){
   readWearing();
   // See if there's an override. Yes, only if the hat is being worn.
   readOverride();
+  stopvibrate()
   if(wearing){
     // See if the user has adjusted max brightness
-    readMaxBrightness ()
+    readMaxBrightness();
     fadeInOrOut();
   }
   if(syncState){

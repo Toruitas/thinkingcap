@@ -137,4 +137,8 @@ Christmas break
 4. (+) Updated schematic to reflect removal of the 2x 220 ohm resistors. They're distorting the signal, rather than preventing distortion. I left them on the perf board, just will not use them. Instead I will connect them directly, as Tom said the Neopixels don't really need them.
 5. (+) Final perfboard completed. It doesn't actually have that many components soldered to it. Didn't really need it.
 6. (+) Tested the new battery. After a moment of shock (remedied by installing Blinky on the machine so I could actually see some response), it works!
-7.
+7. (-) The current supplied over the GPIO pins on the Feather are insufficient to make the vibrators vibrate. 12mA max, 8mA recommended. The vibes work at about 20mA. Must find some way to make them go. There's enough voltage, at least.
+8. (+) I tested using an NPN transistor linked to the main Arduino power supply. Works! 
+9. (-) No coin vibrators in Eagle's libraries. Including Adafruit and Sparkfun. Seems like a big thing to miss.
+10. (+) Found a similar one from https://www.snapeda.com/home/ that works well enough.
+11. (+) Updated vibration code to be non-blocking. Removed the delay and added milli() math instead. Split into 2 functions called separately. 
