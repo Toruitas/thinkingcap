@@ -129,3 +129,12 @@ Christmas break
 11. (-) My Python packages manager got all messed up and I had to waste a couple days getting things back in order. This included some adafruit packages. Why can't every package just get along?
 12. (-) Perhaps related to #11, Arduino IDE wouldn't find adafruit-nrfutil in $PATH. Naturally it worked fine in terminal. Worked fine a month ago. Took a day to get working again, with little idea of what went wrong.
 
+## Week 10 (2020/1/6 - 2020/1/12):
+### Challenge: Get the whole thing functional
+1. (-) Soldered on the green perf board. It's a major pain to make connections between the holes. I'm unable for now to get consistent current through what I draw.
+2. (+) Switched to strip board. The copper that exists already is much better than my cobbled-together circuits. I also switched to using female headers on it, as Tom said they give a better quality of connection.
+3. (+) Discovered current tophat not deep enough. Ordered another one! Taller.
+4. (+) Updated schematic to reflect removal of the 2x 220 ohm resistors. They're distorting the signal, rather than preventing distortion. I left them on the perf board, just will not use them. Instead I will connect them directly, as Tom said the Neopixels don't really need them.
+5. (+) Final perfboard completed. It doesn't actually have that many components soldered to it. Didn't really need it.
+6. (+) Tested the new battery. After a moment of shock (remedied by installing Blinky on the machine so I could actually see some response), it works!
+7.
