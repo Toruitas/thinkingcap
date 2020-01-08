@@ -126,3 +126,6 @@ Christmas break
 9. (+) Added the Neopixels circuit to the Eagle diagram.
 10. (+) Created a dimmer switch for the LEDs, using a potentiometer. Added to circuit diagram. 
 [![Adapixels with dimmer](img/wk9/2_LED_with_dimmer.JPG)](https://youtu.be/gZUIdcbmYeM)
+11. (-) My Python packages manager got all messed up and I had to waste a couple days getting things back in order. This included some adafruit packages. Why can't every package just get along?
+12. (-) Perhaps related to #11, Arduino IDE wouldn't find adafruit-nrfutil in $PATH. Naturally it worked fine in terminal. Worked fine a month ago. Took a day to get working again, with little idea of what went wrong.
+

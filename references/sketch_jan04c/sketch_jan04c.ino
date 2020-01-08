@@ -30,6 +30,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   potReading  = analogRead(potPin);  // 0-1023 for 5v, 0-654 for 3.3v
+  
   UserMaxBrightness = floor(potReading/(654.0/255.0));  // 1023/255.0 for 5v
   fadeInOrOut();
 }
