@@ -43,7 +43,7 @@ int vibeTime = 75; // ms for vibe to last
 #define potPin A5  // Analog!
 int potReading = 0;
 
-// 
+// State string/json variables for state syncing.
 String updateServerString = "";
 String updateFromServerString = "";
 
@@ -69,9 +69,6 @@ void setup() {
   startTime = millis();  // set the first timer.
 }
 
-// test sending info from Arduino to Python (should be over BLE, but that's tough right now)
-// The challenge here is to Keep the state synced between the two.
-// 
 
 void vibrate(){
   // This runs when focus is detected.
@@ -87,6 +84,8 @@ void stopvibrate(){
   }  
 }
 
+// test sending info from Arduino to Python (should be over BLE, but that's tough right now)
+// The challenge here is to Keep the state synced between the two.
 void sendState(){
   // This fn sends the current local environment state of the Arduino to the server.
   // Will be sent every TIME_BETWEEN_MEASUREMENTS: calclated as: (currentTime-startTime)  > TIME_BETWEEN_MEASUREMENTS in the main loop

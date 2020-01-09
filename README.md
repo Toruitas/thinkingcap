@@ -127,7 +127,7 @@ Christmas break
 10. (+) Created a dimmer switch for the LEDs, using a potentiometer. Added to circuit diagram. 
 [![Adapixels with dimmer](img/wk9/2_LED_with_dimmer.JPG)](https://youtu.be/gZUIdcbmYeM)
 11. (-) My Python packages manager got all messed up and I had to waste a couple days getting things back in order. This included some adafruit packages. Why can't every package just get along?
-12. (-) Perhaps related to #11, Arduino IDE wouldn't find adafruit-nrfutil in $PATH. Naturally it worked fine in terminal. Worked fine a month ago. Took a day to get working again, with little idea of what went wrong.
+12. (-) Perhaps related to #11, Arduino IDE wouldn't find adafruit-nrfutil in $PATH. Naturally it worked fine in terminal. Worked fine a month ago. Took a day to get working again, with little idea of what went wrong. This was preventing me from compiling for the Feather.
 
 ## Week 10 (2020/1/6 - 2020/1/12):
 ### Challenge: Get the whole thing functional
@@ -138,7 +138,13 @@ Christmas break
 5. (+) Final perfboard completed. It doesn't actually have that many components soldered to it. Didn't really need it.
 6. (+) Tested the new battery. After a moment of shock (remedied by installing Blinky on the machine so I could actually see some response), it works!
 7. (-) The current supplied over the GPIO pins on the Feather are insufficient to make the vibrators vibrate. 12mA max, 8mA recommended. The vibes work at about 20mA. Must find some way to make them go. There's enough voltage, at least.
-8. (+) I tested using an NPN transistor linked to the main Arduino power supply. Works! 
+8. (+) I tested using an NPN transistor linked to the main Arduino power supply. Works like a charm! 
 9. (-) No coin vibrators in Eagle's libraries. Including Adafruit and Sparkfun. Seems like a big thing to miss.
 10. (+) Found a similar one from https://www.snapeda.com/home/ that works well enough.
 11. (+) Updated vibration code to be non-blocking. Removed the delay and added milli() math instead. Split into 2 functions called separately. 
+12. (+) Installed the required libraries and connected to the Feather over Bluetooth. Followed this: https://learn.adafruit.com/install-bluez-on-the-raspberry-pi/installation
+13. (+) Succeeded in sending strings over Bluetooth in both directions: client-> server-> client. 
+14. (+) Capacitors arrived for Neopixel (just in case they prove necessary)
+15. (+) Made a test 3D print. It failed, the printer head keeps dragging filament and the object bends up from the plate. Still, pretty cool!
+16. (-) Second 3D print failure. So bendy. And non-sticky. Weird. At least I got far enough this time to know I need to adjust all my holes by about 1mm wherever there's a hole. 
+17. (+) Can confirm that bluetooth sending and receiving of my JSON works. Random garbled characters come over the signal, though. Ñ ÅKéB4} Since it's at the end of the string, I can just throw them away and rebuild the JSON for loading.

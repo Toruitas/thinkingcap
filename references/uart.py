@@ -10,14 +10,23 @@
 # https://github.com/adafruit/Adafruit_Python_BluefruitLE/blob/master/examples/uart_service.py
 # https://stackoverflow.com/questions/26678457/how-do-i-install-python3-gi-within-virtualenv/43808204#43808204
 # https://askubuntu.com/questions/1057832/how-to-install-gi-for-anaconda-python3-6 <--- this finally worked for the damn GI package
+# https://forums.adafruit.com/viewtopic.php?t=94337
+# https://learn.adafruit.com/install-bluez-on-the-raspberry-pi/installation
 
 import Adafruit_BluefruitLE
 from Adafruit_BluefruitLE.services import UART
+
+import json
+
 
 
 # Get the BLE provider for the current platform.
 ble = Adafruit_BluefruitLE.get_provider()
 
+send_this = {
+    "banana":"rama",
+    "super":"fly"
+}
 
 # Main function implements the program logic so it can run in a background
 # thread.  Most platforms require the main thread to handle GUI events and other
@@ -68,16 +77,27 @@ def main():
         # and start interacting with it.
         uart = UART(device)
 
+        state_json = json.dumps(send_this)
         # Write a string to the TX characteristic.
-        uart.write(b'Hello world!\r\n')
-        print("Sent 'Hello world!' to the device.")
+        uart.write(state_json.encode())
+        print("Sent the state to the device.")
 
         # Now wait up to one minute to receive data from the device.
         print('Waiting up to 60 seconds to receive data from the device...')
         received = uart.read(timeout_sec=60)
+        first_brace = received.find("{")
+        second_brace = received.find("}")  # finds first
+        received = received[first_brace:second_brace+1]
+        # garbage_starts = received.find("Ñ")
+
+        # Ñ ÅKéB4} Ñ ÅKéB4}
+        # print(received[:garbage_starts])
+        print(received)
+        state = json.loads(received)
+        print(state)
         if received is not None:
             # Received data, print it out.
-            print('Received: {0}'.format(received))
+            print('Received: {0}'.format(state))
         else:
             # Timeout waiting for data, None is returned.
             print('Received no data!')
