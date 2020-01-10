@@ -16,6 +16,8 @@ How-to turn the Thinking Cap on:
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
 3. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
 3a. Add --preset 14 if using the preset 14 configuration file (or any other.)
+4. Make sure bluetooth is running for the Ard: ps aux | grep bluetoothd
+
 
 
 ## Components used:
