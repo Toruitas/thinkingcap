@@ -148,3 +148,5 @@ Christmas break
 15. (+) Made a test 3D print. It failed, the printer head keeps dragging filament and the object bends up from the plate. Still, pretty cool!
 16. (-) Second 3D print failure. So bendy. And non-sticky. Weird. At least I got far enough this time to know I need to adjust all my holes by about 1mm wherever there's a hole. 
 17. (+) Can confirm that bluetooth sending and receiving of my JSON works. Random garbled characters come over the signal, though. Ñ ÅKéB4} Since it's at the end of the string, I can just throw them away and rebuild the JSON for loading.
+18. (-) Infrared library doesn't compile for the Feather Express. Does for Leonardo. Problem in the library, not my code.
+19. (+) In a true hacker move, I updated the IR library and now it works. Magic. Constant 8's, as intended.

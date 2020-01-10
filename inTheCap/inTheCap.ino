@@ -253,7 +253,7 @@ void loop(){
   readWearing();
   // See if there's an override. Yes, only if the hat is being worn.
   readOverride();
-  stopvibrate()
+  stopvibrate();
   if(wearing){
     // See if the user has adjusted max brightness
     readMaxBrightness();
