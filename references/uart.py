@@ -86,7 +86,7 @@ def main():
         print('Waiting up to 60 seconds to receive data from the device...')
         received = uart.read(timeout_sec=60)
         first_brace = received.find("{")
-        second_brace = received.find("}")  # finds first
+        second_brace = received.find("}")  # finds first } which is what we want.
         received = received[first_brace:second_brace+1]
         # garbage_starts = received.find("Ñ")
 

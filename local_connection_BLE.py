@@ -9,8 +9,9 @@ import asyncio
 import datetime
 from contextvars import ContextVar
 
-# Arduino constants for dev
-ARD_PORT = "/dev/ttyACM0" # COM3 or /dev/ttyACM0
+import Adafruit_BluefruitLE
+from Adafruit_BluefruitLE.services import UART
+
 # Osc server constants
 IP = "127.0.0.1"
 OSC_PORT = 5005
@@ -27,7 +28,8 @@ connected = ContextVar("connected", default=False)
 last_reading = ContextVar("last_reading", default=datetime.datetime.now())
 attention_lvl = ContextVar("attn", default=0.0)  # for storing the current level of attention
 
-
+# Get the BLE provider for the current platform.
+ble = Adafruit_BluefruitLE.get_provider()
 
 def concentration_handler(unused_addr:str, fixed_argument, concentration):
     """
@@ -66,46 +68,48 @@ def concentration_handler(unused_addr:str, fixed_argument, concentration):
         # return a_s.mentally_focused
 
 
-async def loop(ser, async_state):
+async def loop(uart_conn, device, async_state):
+    """
+    Main loop of code
+    :param uart_conn:  bluetooth connection
+    :param device:  bluetooth device, to close if needed
+    :param async_state: the state as managed on this server side.
+    :return:
+    """
 
     while async_state.hat_running:
-    # while hat_running.get():
-        # user_input = input('Test control of Arduino? f for focus; anything else to quit.')
-        #
-        # if user_input == 'f':
-        #     # This should change "focused" to true here and on the Ard.
-        #     # Through setting "focused" on the Ard, it will vibrate, light up, etc.
-        #     focused.set(True)
-        #     ser.write(b'f')
-        #
-        # if user_input != 'f':
-        #     hat_running.set(False)   # shut it down on next loop
-        #     ser.write(b'x')  # o for off.
-
-        state = ser.readline()
-        if state:
-            # connection made, update the variables
-            update_server_state(state, async_state)
-        else:
-            update_client_state(ser, async_state)
-        await asyncio.sleep(.1)
+        try:
+            received_state = uart_conn.read(timeout_sec=60)
+            if received_state:
+                # connection made, update the variables
+                update_server_state(received_state, async_state)
+            else:
+                update_client_state(uart_conn, async_state)
+            await asyncio.sleep(.1)
+        finally:
+            device.disconnect()
 
 
-def update_server_state(state: str, async_state):
+def update_server_state(received_state: str, async_state):
     """
     Takes a new state from the Ard and mirrors it on this server.
     Uses set.state since we're in async land
-    :param state: string JSON object
+    :param received_state: string JSON object
     :return: dict object of the state
     """
     # https://stackoverflow.com/questions/26838953/python-read-from-serial-port-and-encode-as-json
     try:
-        state = json.loads(state)
+        # The BLUE data packet has some garbage in it. This bit cuts it down to just the JSON we want.
+        first_brace = received_state.find("{")
+        second_brace = received_state.find("}")  # finds first } which is what we want.
+        received_state = received_state[first_brace:second_brace + 1]
+        state = json.loads(received_state)
+        print(received_state)
     except json.decoder.JSONDecodeError as error:
-        print(state)  # this just prints whatever the message actually is
+        print(received_state)  # this just prints whatever the message actually is
         return False  # early return to prevent the rest of the fn from running
 
-    if type(state) == dict:
+    if type(received_state) == dict:
         # hat_running.set(True)
         # connected.set(True)
         # focused.set(state["focused"])
@@ -115,9 +119,9 @@ def update_server_state(state: str, async_state):
 
         async_state.hat_running = True
         async_state.connected = True
-        async_state.focused = state["focused"]
-        async_state.wearing = state["wearing"]
-        async_state.user_override = state["userOverride"]
+        async_state.focused = received_state["focused"]
+        async_state.wearing = received_state["wearing"]
+        async_state.user_override = received_state["userOverride"]
         async_state.last_reading = datetime.datetime.now()
 
         state_dict = context_vars_to_state_dict(async_state)
@@ -129,10 +133,10 @@ def update_server_state(state: str, async_state):
         # no real reason to return, but doing anyway
         return state_dict
     else:
-        print(state)
+        print(received_state)
 
 
-def update_client_state(ser, async_state):
+def update_client_state(uart_conn, async_state):
     """
     Update the Arduino client.
     https://stackoverflow.com/questions/22275079/pyserial-write-wont-take-my-string
@@ -141,7 +145,7 @@ def update_client_state(ser, async_state):
     state = context_vars_to_state_dict(async_state)
     state_json = json.dumps(state)  # dump to a JSON string
 
-    ser.write(state_json.encode())  # encode
+    uart_conn.write(state_json.encode())  # encode
     # Log to the console
     print("Client state updated to: ")
     print(state_json)
@@ -176,22 +180,50 @@ def context_vars_to_state_dict(async_state) -> dict:
     return state_dict
 
 
-def make_connection(ser, async_state):
+def make_connection():
     """
     Using the given serial connection, attempts to start reading data. If it tries long enough, it'll time out.
     :param ser:
     :return: True if connected
+    Largely ripped from the uart.py example here: https://github.com/adafruit/Adafruit_Python_BluefruitLE/blob/master/examples/uart_service.py
     """
-    print("making a connection")
-    while not hat_running.get():
-        state = ser.readline()
-        if state:
-            # connection made, update the variables
-            updated = update_server_state(state, async_state)
-            if updated:
-                print("Connected to Thinking Cap. Don't let your dreams be dreams!")
-            return True
-        # if timeout todo: make a timeout here for connections.
+    ble.clear_cached_data()
+
+    # Get the first available BLE network adapter and make sure it's powered on.
+    adapter = ble.get_default_adapter()
+    adapter.power_on()
+    print('Using adapter: {0}'.format(adapter.name))
+
+    # Scan for UART devices.
+    print('Searching for UART device...')
+    try:
+        adapter.start_scan()
+        # Search for the first UART device found (will time out after 60 seconds
+        # but you can specify an optional timeout_sec parameter to change it).
+        device = UART.find_device()
+        if device is None:
+            raise RuntimeError('Failed to find UART device!')
+    finally:
+        # Make sure scanning is stopped before exiting.
+        adapter.stop_scan()
+
+    print('Connecting to device...')
+    device.connect()  # Will time out after 60 seconds, specify timeout_sec parameter
+    # to change the timeout.
+
+    try:
+        # Wait for service discovery to complete for the UART service.  Will
+        # time out after 60 seconds (specify timeout_sec parameter to override).
+        print('Discovering services...')
+        UART.discover(device)
+
+        # Once service discovery is complete create an instance of the service
+        # and start interacting with it.
+        uart = UART(device)
+        return True, uart, device
+    finally:
+        # Make sure device is disconnected on exit.
+        device.disconnect()
 
 
 async def init_main():
@@ -215,8 +247,9 @@ async def init_main():
 
     # Prepare the serial port
     # make_connection
-    ser = serial.Serial(ARD_PORT, baudrate=9600, timeout=1)
-    connection_made = make_connection(ser, async_state)
+    ble.initialize()
+    connection_made, uart_conn, device = make_connection()
+
 
     if connection_made:
         # with the connection made and inital state set, can start the main loops.
@@ -229,7 +262,7 @@ async def init_main():
         server = osc_server.AsyncIOOSCUDPServer((IP, OSC_PORT), dispatcher, event_loop_local)
         transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
 
-        await loop(ser, async_state)  # Enter main loop of program.
+        await loop(uart_conn, device, async_state)  # Enter main loop of program.
 
         transport.close()  # Clean up serve endpoint
 
