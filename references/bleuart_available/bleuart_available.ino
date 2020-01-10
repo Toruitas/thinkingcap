@@ -14,14 +14,6 @@
 #include <bluefruit.h>
 #include <Adafruit_LittleFS.h>
 #include <InternalFileSystem.h>
-#include <ArduinoJson.h>
-
-StaticJsonDocument<JSON_OBJECT_SIZE(2)> sendToServerDoc;
-StaticJsonDocument<JSON_OBJECT_SIZE(2)> receiveFromServerDoc;
-
-// state string/json variables
-String updateServerString = "";
-String updateFromServerString = "";
 
 // BLE Service
 BLEDfu  bledfu;  // OTA DFU service
@@ -107,23 +99,23 @@ void startAdv(void)
 void loop()
 {
   // Forward data from HW Serial to BLEUART
-//  while (Serial.available())
-//  {
-//    // Delay to wait for enough input, since we have a limited transmission buffer
-//    delay(2);
-//
-//    uint8_t buf[64];
-//    int count = Serial.readBytes(buf, sizeof(buf));
-//    bleuart.write( buf, count );
-//  }
+  while (Serial.available())
+  {
+    // Delay to wait for enough input, since we have a limited transmission buffer
+    delay(2);
 
+    uint8_t buf[64];
+    int count = Serial.readBytes(buf, sizeof(buf));
+    bleuart.write( buf, count );
+  }
+
+  Serial.println(bleuart.available());
   // Forward from BLEUART to HW Serial
   while ( bleuart.available() )
   {
-//    updateFromServerString = bleuart.readString();
-//    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
-    Serial.println("This totally works");
-    sendState();
+    uint8_t ch;
+    ch = (uint8_t) bleuart.read();
+    Serial.write(ch);
   }
 }
 
@@ -152,16 +144,4 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 
   Serial.println();
   Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
-}
-
-void sendState(){
-  // https://stackoverflow.com/questions/36338134/how-to-convert-a-string-into-an-uint8-t-array-on-arduino
-  sendToServerDoc["focused"].set("nope");
-  sendToServerDoc["wearing"].set("also nope");  
-  updateServerString = ""+sendToServerDoc.as<String>();
-
-  uint8_t buf[64];
-  updateServerString.getBytes(buf,sizeof(buf));
-  bleuart.write( buf,  sizeof(buf));
-//  Serial.println(updateServerString);
 }

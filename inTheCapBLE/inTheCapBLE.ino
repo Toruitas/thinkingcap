@@ -57,7 +57,7 @@ BLEUart bleuart; // uart over ble
 BLEBas  blebas;  // battery
 
 StaticJsonDocument<JSON_OBJECT_SIZE(3)> sendToServerDoc;
-StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
+StaticJsonDocument<JSON_OBJECT_SIZE(7)> receiveFromServerDoc;
 
 SharpIR SharpIR(IR, model);
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);  // https://coolcomponents.co.uk/products/ws2815-digital-addressable-led-strip-60-leds-m-1m-adafruit-neopixel-compatible?variant=29496998264893
@@ -100,6 +100,9 @@ void setup() {
   strip.show();  // clear prior light settings
   
   startTime = millis();  // set the first timer.
+
+  Serial.begin(9600);  // serial when connected for logging
+  
 }
 
 void startAdv(void)
@@ -193,6 +196,9 @@ void sendState(){
   uint8_t buf[64];  // 64 should be enough to send the whole state. 
   updateServerString.getBytes(buf,sizeof(buf));
   bleuart.write( buf,  sizeof(buf));
+  if(Serial.available()){
+    Serial.println(updateServerString);
+  }
 }
 
 void readState(){
@@ -200,38 +206,38 @@ void readState(){
   // The server ONLY sends a message if the Thinking cap state changes. 
   // Focused or Not.
   // https://www.youtube.com/watch?v=iuHxPQB6Rx4 for JSON parsing info. 
-  if (Serial.available()){
-    updateFromServerString = bleuart.readString();
+  updateFromServerString = bleuart.read();
 
-    // load updateFromServerString into the JSON doc receiveFromServerDoc
-    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
+  // load updateFromServerString into the JSON doc receiveFromServerDoc
+  DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
 
-    // if parsing failed
-    if(err){
-      Serial.println("Error");
-      return;
-    // if it succeeded
+  // if parsing failed
+  if(err){
+    Serial.println("Error deserializing");
+    Serial.println(updateFromServerString);
+    return;
+  // if it succeeded
+  }else{
+    // update focused state
+    focused = receiveFromServerDoc["focused"];
+    // new focused state. 
+    if(focused && !focused_prev){
+      focused_prev = focused;
+      userOverride = false;  // override 
+      vibrate();
+      // color = "red" on Neopixel
+    // new un-focused state
+    }else if(!focused && focused_prev){
+      focused_prev = focused;
+      vibrate();
+      // color = "green" on Neopixel.
+    // focused state unchanged.
     }else{
-      // update focused state
-      focused = receiveFromServerDoc["focused"];
-      // new focused state. 
-      if(focused && !focused_prev){
-        focused_prev = focused;
-        userOverride = false;  // override 
-        vibrate();
-        // color = "red" on Neopixel
-      // new un-focused state
-      }else if(!focused && focused_prev){
-        focused_prev = focused;
-        vibrate();
-        // color = "green" on Neopixel.
-      // focused state unchanged.
-      }else{
-        // if the state matches, reset the override. Not necessary anymore. 
-        userOverride = false;
-      }
+      // if the state matches, reset the override. Not necessary anymore. 
+      userOverride = false;
     }
-  }
+    }
+  
 }
 
 void readWearing(){
@@ -311,7 +317,6 @@ void fadeInOrOut(){
       strip.fill(strip.Color(strip.gamma8(floor(currentBrightness*(UserMaxBrightness/255))),0,0)); // red for stay away
     }    
     strip.show();
-    Serial.println(currentBrightness*(UserMaxBrightness/255));
     updateLEDs = false;
   }
 }
@@ -341,24 +346,26 @@ void readOverride(){
 }
 
 void loop(){
-  // set wearing using IR. 
-  readWearing();
-  // See if there's an override. Yes, only if the hat is being worn.
-  readOverride();
-  stopvibrate();
-  if(wearing){
-    // See if the user has adjusted max brightness
-    readMaxBrightness();
-    fadeInOrOut();
-  }
-  if(syncState && bleuart.available()){
-    // Determine if we should send the state to the server.
-    currentTime = millis();
-    if((currentTime-startTime)  > TIME_BETWEEN_UPDATES){
-      sendState();
-      startTime = currentTime;
+
+    // set wearing using IR. 
+    readWearing();
+    // See if there's an override. Yes, only if the hat is being worn.
+    readOverride();
+    stopvibrate();
+    if(wearing){
+      // See if the user has adjusted max brightness
+      readMaxBrightness();
+      fadeInOrOut();
     }
-    readState();
-  }
+    if(syncState){
+      // Determine if we should send the state to the server.
+      currentTime = millis();
+      if((currentTime-startTime)  > TIME_BETWEEN_UPDATES){
+        sendState();
+        startTime = currentTime;
+      }
+      readState();
+    }
+  
   
 }

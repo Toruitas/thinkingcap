@@ -16,7 +16,16 @@ How-to turn the Thinking Cap on:
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
 3. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
 3a. Add --preset 14 if using the preset 14 configuration file (or any other.)
-4. Make sure bluetooth is running for the Ard: ps aux | grep bluetoothd
+4. Make sure Bluetooth is running on Linux for the Ard: ps aux | grep bluetoothd
+5. Power on the Neopixels. Just plug them in.
+6. Power on the Arduino. Just plug them in.
+7. Run local_connection_BLE.py.
+8. Think.
+
+## Preparations:
+https://learn.adafruit.com/bluefruit-le-python-library/installation
+https://learn.adafruit.com/bluefruit-le-python-library/usage
+
 
 
 
@@ -152,3 +161,4 @@ Christmas break
 17. (+) Can confirm that bluetooth sending and receiving of my JSON works. Random garbled characters come over the signal, though. Ñ ÅKéB4} Since it's at the end of the string, I can just throw them away and rebuild the JSON for loading.
 18. (-) Infrared library doesn't compile for the Feather Express. Does for Leonardo. Problem in the library, not my code.
 19. (+) In a true hacker move, I updated the IR library and now it works. Magic. Constant 8's, as intended.
+20. (-) 
