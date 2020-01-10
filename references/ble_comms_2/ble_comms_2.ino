@@ -122,7 +122,7 @@ void loop()
   {
     updateFromServerString = bleuart.readString();
     DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
-    Serial.println(updateFromServerString);
+//    Serial.println(updateFromServerString);
     sendState();
   }
 }
@@ -163,5 +163,5 @@ void sendState(){
   uint8_t buf[64];
   updateServerString.getBytes(buf,sizeof(buf));
   bleuart.write( buf,  sizeof(buf));
-  Serial.println(updateServerString);
+//  Serial.println(updateServerString);
 }
