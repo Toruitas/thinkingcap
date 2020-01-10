@@ -161,4 +161,5 @@ Christmas break
 17. (+) Can confirm that bluetooth sending and receiving of my JSON works. Random garbled characters come over the signal, though. Ñ ÅKéB4} Since it's at the end of the string, I can just throw them away and rebuild the JSON for loading.
 18. (-) Infrared library doesn't compile for the Feather Express. Does for Leonardo. Problem in the library, not my code.
 19. (+) In a true hacker move, I updated the IR library and now it works. Magic. Constant 8's, as intended.
-20. (-) 
+20. (-) Feather isn't recognized on any ttyACM port after being unplugged while on battery. How annoying to test. It "unfreezes" when disconnected.
+21. (+) Bluetooth syncing of state now functional. Woo!

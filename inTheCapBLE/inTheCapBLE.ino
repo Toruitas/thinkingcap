@@ -213,8 +213,10 @@ void readState(){
 
   // if parsing failed
   if(err){
-    Serial.println("Error deserializing");
-    Serial.println(updateFromServerString);
+    if(Serial.available()){
+      Serial.println("Error deserializing");
+      Serial.println(updateFromServerString);
+    }
     return;
   // if it succeeded
   }else{
