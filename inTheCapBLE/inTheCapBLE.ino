@@ -8,7 +8,7 @@
 int OVERRIDEPIN = 5;
 #define IR A0 // define signal pin for infrared
 #define model 1080 // used 1080 because model GP2Y0A21YK0F is used
-int TIME_BETWEEN_UPDATES = 100;  // ms. How long between measurements to report back to the server.
+int TIME_BETWEEN_UPDATES = 250;  // ms. How long between measurements to report back to the server.
 bool focused = false;
 bool focused_prev = false;
 bool wearing = false;
@@ -205,37 +205,45 @@ void readState(){
   // https://www.youtube.com/watch?v=iuHxPQB6Rx4 for JSON parsing info. 
   updateFromServerString = bleuart.read();
 
-  // load updateFromServerString into the JSON doc receiveFromServerDoc
-  DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
+  if (updateFromServerString != "-1"){
 
-  // if parsing failed
-  if(err){
-    if(Serial.available()){
-      Serial.println("Error deserializing");
-      Serial.println(updateFromServerString);
-    }
-    return;
-  // if it succeeded
-  }else{
-    // update focused state
-    focused = receiveFromServerDoc["focused"];
-    // new focused state. 
-    if(focused && !focused_prev){
-      focused_prev = focused;
-      userOverride = false;  // override 
-      vibrate();
-      // color = "red" on Neopixel
-    // new un-focused state
-    }else if(!focused && focused_prev){
-      focused_prev = focused;
-      vibrate();
-      // color = "green" on Neopixel.
-    // focused state unchanged.
+    // load updateFromServerString into the JSON doc receiveFromServerDoc
+    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
+  
+    // if parsing failed
+    if(err){
+      if(Serial.available()){
+        Serial.println("Error deserializing");
+      }
+      return;
+    // if it succeeded
     }else{
-      // if the state matches, reset the override. Not necessary anymore. 
-      userOverride = false;
+      // update focused state
+      if (receiveFromServerDoc["focused"] != -1){
+        focused = receiveFromServerDoc["focused"];
+      }else{
+        focused = focused;
+      }
+      focused = receiveFromServerDoc["focused"];
+      // new focused state. 
+      if(focused && !focused_prev){
+        focused_prev = focused;
+        userOverride = false;  // override 
+        vibrate();
+        // color = "red" on Neopixel
+      // new un-focused state
+      }else if(!focused && focused_prev){
+        focused_prev = focused;
+        vibrate();
+        // color = "green" on Neopixel.
+      // focused state unchanged.
+      }else{
+        // if the state matches, reset the override. Not necessary anymore. 
+        userOverride = false;
+      }
     }
-    }
+  }
+  Serial.println(updateFromServerString);
   
 }
 
@@ -317,6 +325,7 @@ void fadeInOrOut(){
       strip.fill(strip.Color(strip.gamma8(floor(currentBrightness*(UserMaxBrightness/255))),0,0)); // red for stay away
     }    
     strip.show();
+//    Serial.println(currentBrightness*(UserMaxBrightness/255));
     updateLEDs = false;
   }
 }

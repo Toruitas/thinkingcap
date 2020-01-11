@@ -166,4 +166,4 @@ Christmas break
 21. (+) Bluetooth syncing of state now functional. Woo!
 22. (-) Won't connect at the same time, if attempting to connect in the wrong order. Has to be: Feather first, brain scanner second. Doesn't seem to be any way to specify the device to connect to in the Adafruit package.
 23. (-) Vibrator issues still. My breadboard version and what I soldered don't work the same. Perfboard loses the juice. Re-soldered and fixed.
-24. (+) Added turn off the lights function for when hat isn't being worn.
+24. (+) Added turn off the lights function for when hat isn't being worn. Everything working over serial, but BLE has some blocking. 

@@ -38,7 +38,7 @@ async_state.user_override = False
 async_state.last_reading = time.time()
 async_state.attention_lvl = 0.0
 
-sync_state_seconds = 0.1
+sync_state_seconds = 0.250  # 250ms between updates. Same on the Arduino. BLE isn't as fast as Serial, evidently.
 
 # Get the BLE provider for the current platform.
 ble = Adafruit_BluefruitLE.get_provider()
