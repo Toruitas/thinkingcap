@@ -7,7 +7,7 @@ int vibeTime = 75; // ms for vibe to last
 void setup() {
   // put your setup code here, to run once:
   pinMode(VIBEPIN_1, OUTPUT);
-  digitalWrite(VIBEPIN_1, LOW);
+  digitalWrite(VIBEPIN_1, HIGH);
   delay(1000);
   vibrate();
 //  vibrate();
@@ -16,7 +16,10 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 //  vibrate();
+  digitalWrite(VIBEPIN_1, HIGH);
+  delay(5000);
   stopvibrate();
+  
 //  digitalWrite(VIBEPIN_1, HIGH);
 //  delay(vibeTime);
 //  digitalWrite(VIBEPIN_1, LOW);

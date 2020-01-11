@@ -321,6 +321,12 @@ void fadeInOrOut(){
   }
 }
 
+void turnOffLights(){
+    // This turns the lights off in the case of not being worn. 
+    strip.fill(strip.Color(0, 0,0));
+    strip.show();
+  }
+
 void readMaxBrightness(){
   // Gets the setting of the potentiometer, which determines how high the maximum brightness of the LEDs are
   // References here: https://learn.adafruit.com/adafruit-arduino-lesson-8-analog-inputs/arduino-code & https://www.arduino.cc/en/Tutorial/AnalogReadSerial
@@ -338,6 +344,7 @@ void readOverride(){
     // Do I need a debounce time?
     focused = !focused;  // 
     focused_prev = !focused_prev;
+    vibrate();
     userOverride = true;  // overriding, 
     btnPressed_prev = btnPressed;  // store this press for comparison.
   }else{ 
@@ -356,6 +363,8 @@ void loop(){
       // See if the user has adjusted max brightness
       readMaxBrightness();
       fadeInOrOut();
+    }else{
+      turnOffLights();
     }
     if(syncState){
       // Determine if we should send the state to the server.

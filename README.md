@@ -16,6 +16,7 @@ How-to turn the Thinking Cap on:
 3. Power on the Feather. Just plug them in. If they're on while connecting to the Muse, the OSC server will connect to both.
 4. Run local_connection_BLE.py. Connect to the Feather.
 5. Turn the Muse on by pressing the Circular on/off button.
+5a. May need to re-pair the device. Go to the Bluetooth menu and click to connect, and confirm the number shared.
 6. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
 7. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
@@ -164,3 +165,5 @@ Christmas break
 20. (-) Feather isn't recognized on any ttyACM port after being unplugged while on battery. How annoying to test. It "unfreezes" when disconnected.
 21. (+) Bluetooth syncing of state now functional. Woo!
 22. (-) Won't connect at the same time, if attempting to connect in the wrong order. Has to be: Feather first, brain scanner second. Doesn't seem to be any way to specify the device to connect to in the Adafruit package.
+23. (-) Vibrator issues still. My breadboard version and what I soldered don't work the same. Perfboard loses the juice. Re-soldered and fixed.
+24. (+) Added turn off the lights function for when hat isn't being worn.

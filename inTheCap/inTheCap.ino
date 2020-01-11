@@ -2,7 +2,7 @@
 #include <SharpIR.h>
 #include <Adafruit_NeoPixel.h>
 
-int OVERRIDEPIN = 7;
+int OVERRIDEPIN = 5;
 #define IR A0 // define signal pin for infrared
 #define model 1080 // used 1080 because model GP2Y0A21YK0F is used
 int TIME_BETWEEN_UPDATES = 100;  // ms. How long between measurements to report back to the server.
@@ -34,7 +34,7 @@ bool fadingIn = true;
 bool updateLEDs = false;
 
 // Vibrator settings
-int VIBEPIN_1 = 2;
+int VIBEPIN_1 = 10;
 unsigned long vibeStartTime = 0;
 unsigned long vibeCurrentTime = 0;
 int vibeTime = 75; // ms for vibe to last
@@ -48,7 +48,7 @@ String updateServerString = "";
 String updateFromServerString = "";
 
 StaticJsonDocument<JSON_OBJECT_SIZE(3)> sendToServerDoc;
-StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
+StaticJsonDocument<JSON_OBJECT_SIZE(7)> receiveFromServerDoc;
 
 SharpIR SharpIR(IR, model);
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);  // https://coolcomponents.co.uk/products/ws2815-digital-addressable-led-strip-60-leds-m-1m-adafruit-neopixel-compatible?variant=29496998264893
@@ -224,6 +224,12 @@ void fadeInOrOut(){
   }
 }
 
+void turnOffLights(){
+    // This turns the lights off in the case of not being worn. 
+    strip.fill(strip.Color(0, 0,0));
+    strip.show();
+  }
+  
 void readMaxBrightness(){
   // Gets the setting of the potentiometer, which determines how high the maximum brightness of the LEDs are
   // References here: https://learn.adafruit.com/adafruit-arduino-lesson-8-analog-inputs/arduino-code & https://www.arduino.cc/en/Tutorial/AnalogReadSerial
@@ -241,6 +247,7 @@ void readOverride(){
     // Do I need a debounce time?
     focused = !focused;  // 
     focused_prev = !focused_prev;
+    vibrate();
     userOverride = true;  // overriding, 
     btnPressed_prev = btnPressed;  // store this press for comparison.
   }else{ 
@@ -258,6 +265,8 @@ void loop(){
     // See if the user has adjusted max brightness
     readMaxBrightness();
     fadeInOrOut();
+  }else{
+    turnOffLights();
   }
   if(syncState){
     // Determine if we should send the state to the server.
