@@ -251,7 +251,7 @@ void readWearing(){
 
   // Get the distance. If w/in 1-14cm, it should read as wearing. Why 1cm? 0 seems to fire frequently on bad readings. 
   int dis=SharpIR.distance();
-  if(dis<14 && dis>1){
+  if(dis<8 && dis>1){
     wearing = true;
   }else{
     wearing = false;
