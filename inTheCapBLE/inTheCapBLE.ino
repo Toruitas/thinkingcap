@@ -11,6 +11,7 @@ int OVERRIDEPIN = 5;
 int TIME_BETWEEN_UPDATES = 250;  // ms. How long between measurements to report back to the server.
 bool focused = false;
 bool focused_prev = false;
+bool mentally_focused = false;
 bool wearing = false;
 bool wearing_prev = false;
 bool hatRunning = false;
@@ -102,8 +103,8 @@ void setup() {
   startTime = millis();  // set the first timer.
 
   Serial.begin(9600);  // serial when connected for logging
-  
 }
+
 
 void startAdv(void)
 {
@@ -134,6 +135,7 @@ void startAdv(void)
   Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds  
 }
 
+
 /**
  * Callback invoked when a connection is dropped
  * @param conn_handle connection where this event happens
@@ -149,6 +151,7 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 //  Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
 }
 
+
 // callback invoked when central connects
 void connect_callback(uint16_t conn_handle)
 {
@@ -162,11 +165,13 @@ void connect_callback(uint16_t conn_handle)
 //  Serial.println(central_name);
 }
 
+
 void vibrate(){
   // This runs when focus is detected.
     digitalWrite(VIBEPIN_1, HIGH);
     vibeStartTime = millis();
 }
+
 
 void stopvibrate(){
   // This runs on every loop to catch any active vibrations.
@@ -175,6 +180,7 @@ void stopvibrate(){
     digitalWrite(VIBEPIN_1, LOW);
   }  
 }
+
 
 // test sending info from Arduino to Python (should be over BLE, but that's tough right now)
 // The challenge here is to Keep the state synced between the two.
@@ -193,10 +199,11 @@ void sendState(){
   // Cast the JsonVariant to a string and send it over BLE.
   updateServerString = ""+sendToServerDoc.as<String>();
   
-  uint8_t buf[64];  // 64 should be enough to send the whole state. 
+  uint8_t buf[128];  // 128 should be enough to send the whole state. It's only 3 things...
   updateServerString.getBytes(buf,sizeof(buf));
   bleuart.write( buf,  sizeof(buf));
 }
+
 
 void readState(){
   // This fn copies a state update from the server to the local Arduino environment.
@@ -218,34 +225,24 @@ void readState(){
       return;
     // if it succeeded
     }else{
-      // update focused state
-      if (receiveFromServerDoc["focused"] != -1){
-        focused = receiveFromServerDoc["focused"];
-      }else{
-        focused = focused;
-      }
-      focused = receiveFromServerDoc["focused"];
+      mentally_focused = receiveFromServerDoc["mentally_focused"];
       // new focused state. 
-      if(focused && !focused_prev){
-        focused_prev = focused;
-        userOverride = false;  // override 
-        vibrate();
-        // color = "red" on Neopixel
-      // new un-focused state
-      }else if(!focused && focused_prev){
-        focused_prev = focused;
-        vibrate();
-        // color = "green" on Neopixel.
-      // focused state unchanged.
-      }else{
-        // if the state matches, reset the override. Not necessary anymore. 
+      if(mentally_focused == focused){
         userOverride = false;
+      }else{
+        if(!userOverride){
+          if(mentally_focused != focused){
+            focused_prev = focused;
+            focused = mentally_focused;
+            vibrate();
+          }
+        }
       }
     }
   }
-  Serial.println(updateFromServerString);
-  
+  Serial.println(updateFromServerString); 
 }
+
 
 void readWearing(){
   // Depending on stability of the sensor, may have to put this into an array. Get 3 readings over a certain amount of time to mean something.
@@ -265,6 +262,7 @@ void readWearing(){
     wearing = false;
   }
 }
+
 
 void fadeInOrOut(){
   // update the lights. Lights always on as long as the hat is being worn. Defaults to green for "please talk to me" just for more theatrics. Gotta see the change!
@@ -330,11 +328,13 @@ void fadeInOrOut(){
   }
 }
 
+
 void turnOffLights(){
     // This turns the lights off in the case of not being worn. 
     strip.fill(strip.Color(0, 0,0));
     strip.show();
   }
+
 
 void readMaxBrightness(){
   // Gets the setting of the potentiometer, which determines how high the maximum brightness of the LEDs are
@@ -342,6 +342,7 @@ void readMaxBrightness(){
   potReading  = analogRead(potPin);  // 0-1023 for 5v, 0-654 for 3.3v
   UserMaxBrightness = floor(potReading/(654.0/255.0));  // 1023/255.0 for 5v
 }
+
 
 void readOverride(){
   // Reads the button for overriding. 
@@ -383,10 +384,6 @@ void loop(){
         startTime = currentTime;
       }
       readState();
-    }
-    
-    if(Serial.available()){
-      Serial.println(userOverride);
     }
   
   
