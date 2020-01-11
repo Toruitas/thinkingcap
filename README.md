@@ -11,15 +11,15 @@ The Thinking Cap is based off of a Muse 2014 headset.
 
 ## How to use:
 How-to turn the Thinking Cap on:
-1. Turn the Muse on by pressing the Circular on/off button.
-2. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
+1. Make sure Bluetooth is running on Linux for the Ard: ps aux | grep bluetoothd
+2. Power on the Neopixels. Just plug them in.
+3. Power on the Feather. Just plug them in. If they're on while connecting to the Muse, the OSC server will connect to both.
+4. Run local_connection_BLE.py. Connect to the Feather.
+5. Turn the Muse on by pressing the Circular on/off button.
+6. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
-3. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
-3a. Add --preset 14 if using the preset 14 configuration file (or any other.)
-4. Make sure Bluetooth is running on Linux for the Ard: ps aux | grep bluetoothd
-5. Power on the Neopixels. Just plug them in.
-6. Power on the Arduino. Just plug them in.
-7. Run local_connection_BLE.py.
+7. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
+7a. Add --preset 14 if using the preset 14 configuration file (or any other.)
 8. Think.
 
 ## Preparations:
@@ -163,3 +163,4 @@ Christmas break
 19. (+) In a true hacker move, I updated the IR library and now it works. Magic. Constant 8's, as intended.
 20. (-) Feather isn't recognized on any ttyACM port after being unplugged while on battery. How annoying to test. It "unfreezes" when disconnected.
 21. (+) Bluetooth syncing of state now functional. Woo!
+22. (-) Won't connect at the same time, if attempting to connect in the wrong order. Has to be: Feather first, brain scanner second. Doesn't seem to be any way to specify the device to connect to in the Adafruit package.

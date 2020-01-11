@@ -5,7 +5,7 @@
 #include <Adafruit_LittleFS.h>
 #include <InternalFileSystem.h>
 
-int OVERRIDEPIN = 7;
+int OVERRIDEPIN = 5;
 #define IR A0 // define signal pin for infrared
 #define model 1080 // used 1080 because model GP2Y0A21YK0F is used
 int TIME_BETWEEN_UPDATES = 100;  // ms. How long between measurements to report back to the server.
@@ -37,7 +37,7 @@ bool fadingIn = true;
 bool updateLEDs = false;
 
 // Vibrator settings
-int VIBEPIN_1 = 2;
+int VIBEPIN_1 = 10;
 unsigned long vibeStartTime = 0;
 unsigned long vibeCurrentTime = 0;
 int vibeTime = 75; // ms for vibe to last
@@ -196,9 +196,6 @@ void sendState(){
   uint8_t buf[64];  // 64 should be enough to send the whole state. 
   updateServerString.getBytes(buf,sizeof(buf));
   bleuart.write( buf,  sizeof(buf));
-  if(Serial.available()){
-    Serial.println(updateServerString);
-  }
 }
 
 void readState(){
@@ -247,6 +244,7 @@ void readWearing(){
   // Likely have to compensate some for "adjusting the hat" for comfort? 
 
   // wearing is the leading indicator, so on the next loop, update wearing_prev to indicate continued wearing.
+  // probably need some kind of debounce here, too. Or could use the array average method. 
   if (wearing != wearing_prev){
     wearing_prev = wearing;
   }
@@ -367,6 +365,10 @@ void loop(){
         startTime = currentTime;
       }
       readState();
+    }
+    
+    if(Serial.available()){
+      Serial.println(userOverride);
     }
   
   
