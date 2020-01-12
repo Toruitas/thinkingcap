@@ -210,9 +210,16 @@ void readState(){
   // The server ONLY sends a message if the Thinking cap state changes. 
   // Focused or Not.
   // https://www.youtube.com/watch?v=iuHxPQB6Rx4 for JSON parsing info. 
-  updateFromServerString = bleuart.readString();
 
-  if(updateFromServerString != ""){
+  char ch;
+  String cha;
+  ch = (char) bleuart.read();
+  cha = (String) ch;
+
+  if (cha == "{"){
+    updateFromServerString = cha;
+  }else if(cha == "}"){
+    updateFromServerString = updateFromServerString + cha;    
     // load updateFromServerString into the JSON doc receiveFromServerDoc
     DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
   
@@ -243,9 +250,10 @@ void readState(){
     if(Serial.available()){
       Serial.println(updateFromServerString); 
     }
+  }else{
+    updateFromServerString = updateFromServerString + cha;
   }
 }
-
 
 void readWearing(){
   // Depending on stability of the sensor, may have to put this into an array. Get 3 readings over a certain amount of time to mean something.
@@ -388,8 +396,7 @@ void loop(){
       }
 //      while ( bleuart.available() )
 //      {
-//        readState();
+        readState();
 //      }
-    updateFromServerString = bleuart.readString();
     }
 }
