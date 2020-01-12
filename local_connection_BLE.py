@@ -80,11 +80,19 @@ def update_client_state(uart_conn):
 
 
 def update_focused():
-    concentration_level = pickle.load(pickle_path+"concentration.pkl", 'rb')
-    if concentration_level > 0.5:
-        async_state.mentally_focused = True
-    else:
-        async_state.mentally_focused = False
+    try:
+        with open(pickle_path+'concentration.pkl', 'rb') as pickle_file:
+            concentration_dict = pickle.load(pickle_file)
+        concentration_level = concentration_dict["concentration"]
+        if concentration_level > 0.5:
+            async_state.mentally_focused = True
+        else:
+            async_state.mentally_focused = False
+    except FileNotFoundError:
+        return
+    except pickle.UnpicklingError:
+        # just can't open sometimes. Skip it and try later.
+        return
 
 
 def context_vars_to_state_dict(async_state) -> dict:

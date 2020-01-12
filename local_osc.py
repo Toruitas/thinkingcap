@@ -20,9 +20,11 @@ def concentration_handler(unused_addr:str, concentration):
     :return:
     """
     print("Current attention level: ", concentration)
+    concentration_dict = {"concentration": concentration}
     # now write concentration to a file. Pickle.
     pickle_file = open(pickle_path+"concentration.pkl", 'wb')
-    pickle.dump(concentration, pickle_file)
+    pickle.dump(concentration_dict, pickle_file)
+    pickle_file.close()
 
 
 async def dummy_loop():
@@ -50,6 +52,8 @@ async def init_main():
     # creates an OSC server that's Async.
     server = osc_server.AsyncIOOSCUDPServer((IP, OSC_PORT), dispatcher, event_loop_local)
     transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
+
+    print("OSC server running.")
 
     await dummy_loop()
 
