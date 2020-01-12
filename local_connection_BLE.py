@@ -1,32 +1,11 @@
-import serial
-import argparse
-import math
-import time
 import json
-from pythonosc.dispatcher import Dispatcher
-from pythonosc import osc_server
 import asyncio
 import time
+import pickle
 from contextvars import ContextVar
 
 import Adafruit_BluefruitLE
 from Adafruit_BluefruitLE.services import UART
-
-# Osc server constants
-IP = "127.0.0.1"
-OSC_PORT = 5005
-
-# https://docs.python.org/3.7/library/contextvars.html
-# Context Vars work great with asyncio
-# focused = ContextVar("focused", default=False)  # focused = False
-# since focused can be overriden, true focus state is stored in a separate var
-# mentally_focused = ContextVar("mentally_focused", default=False)
-# wearing = ContextVar("wearing", default=False)  # wearing = False
-# hat_running = ContextVar("hat_running", default=False)  # running = True
-# user_override = ContextVar("user_override", default=False)  # user_override = False
-# connected = ContextVar("connected", default=False)
-# last_reading = ContextVar("last_reading", default=datetime.datetime.now())
-# attention_lvl = ContextVar("attn", default=0.0)  # for storing the current level of attention
 
 async_state = type('', (), {})()
 async_state.focused = False
@@ -39,68 +18,10 @@ async_state.last_reading = time.time()
 async_state.attention_lvl = 0.0
 
 sync_state_seconds = 0.250  # 250ms between updates. Same on the Arduino. BLE isn't as fast as Serial, evidently.
+pickle_path = ""
 
 # Get the BLE provider for the current platform.
 ble = Adafruit_BluefruitLE.get_provider()
-
-def concentration_handler(unused_addr:str, fixed_argument, concentration):
-    """
-    This is called every time data comes in by the OSC dispatcher.
-    https://python-osc.readthedocs.io/en/latest/dispatcher.html
-    :param unused_addr: the given address that's associated with this "view"
-    :param args: anything extra
-    :param concentration: values of concentration
-    :return:
-    """
-    # print("Current attention level: ", concentration)
-    # if concentration >= 0.5 and mentally_focused.get() is False:
-    #     mentally_focused.set(True)
-    #     if not user_override.get():
-    #         focused.set(mentally_focused.get())
-    #     print("Focused, you bad mofo, you. Look at that.")
-    #     return mentally_focused.get()
-    # else:
-    #     mentally_focused.set(False)
-    #     if not user_override.get():
-    #         focused.set(mentally_focused.get())
-    #     return mentally_focused.get()
-    a_s = fixed_argument[0]
-
-    print("Current attention level: ", concentration)
-    if concentration >= 0.5:
-        a_s.mentally_focused = True
-        if not a_s.user_override:
-            a_s.focused = a_s.mentally_focused
-        # print("Focused, you bad mofo, you. Look at that.")
-        # return a_s.mentally_focused
-    else:
-        a_s.mentally_focused = False
-        if not a_s.user_override:
-            a_s.focused = a_s.mentally_focused
-        # return a_s.mentally_focused
-
-
-async def loop(uart_conn, device, async_state):
-    """
-    Main loop of code
-    :param uart_conn:  bluetooth connection
-    :param device:  bluetooth device, to close if needed
-    :param async_state: the state as managed on this server side.
-    :return:
-    """
-
-    while async_state.hat_running:
-        try:
-            received_state = uart_conn.read(timeout_sec=60)
-            if received_state:
-                # connection made, update the variables
-                update_server_state(received_state)
-            else:
-                update_client_state(uart_conn)
-            await asyncio.sleep(.1)
-        finally:
-            device.disconnect()
-            exit()
 
 
 def update_server_state(received_state: str):
@@ -120,12 +41,6 @@ def update_server_state(received_state: str):
         print(received_state)
 
         if type(received_state) == dict:
-            # hat_running.set(True)
-            # connected.set(True)
-            # focused.set(state["focused"])
-            # wearing.set(state["wearing"])
-            # user_override.set(state["userOverride"])
-            # last_reading.set(datetime.datetime.now())
 
             async_state.hat_running = True
             async_state.connected = True
@@ -146,9 +61,6 @@ def update_server_state(received_state: str):
             print(received_state)
     except json.decoder.JSONDecodeError as error:
         print(received_state)  # this just prints whatever the message actually is
-        # early return to prevent the rest of the fn from running
-
-
 
 
 def update_client_state(uart_conn):
@@ -157,6 +69,7 @@ def update_client_state(uart_conn):
     https://stackoverflow.com/questions/22275079/pyserial-write-wont-take-my-string
     :return:
     """
+
     state = context_vars_to_state_dict(async_state)
     state_json = json.dumps(state, sort_keys=True, default=str)  # dump to a JSON string according to https://stackoverflow.com/questions/11875770/how-to-overcome-datetime-datetime-not-json-serializable
 
@@ -166,22 +79,19 @@ def update_client_state(uart_conn):
     print(state_json)
 
 
+def update_focused():
+    concentration_level = pickle.load(pickle_path+"concentration.pkl", 'rb')
+    if concentration_level > 0.5:
+        async_state.mentally_focused = True
+    else:
+        async_state.mentally_focused = False
+
+
 def context_vars_to_state_dict(async_state) -> dict:
     """
     Convenience fn to turn the context variables into a dictionary,
     :return:
     """
-    # print(mentally_focused.get())
-    # state_dict = {
-    #     "focused": focused.get(),
-    #     "mentally_focused": mentally_focused.get(),
-    #     "wearing": wearing.get(),
-    #     "hat_running": hat_running.get(),
-    #     "connected": connected.get(),
-    #     "user_override": user_override.get(),
-    #     "last_reading": last_reading.get()
-    # }
-
     state_dict = {
         "focused": async_state.focused,
         "mentally_focused": async_state.mentally_focused,
@@ -193,53 +103,6 @@ def context_vars_to_state_dict(async_state) -> dict:
     }
 
     return state_dict
-
-#
-# def make_connection():
-#     """
-#     Using the given serial connection, attempts to start reading data. If it tries long enough, it'll time out.
-#     :param ser:
-#     :return: True if connected
-#     Largely ripped from the uart.py example here: https://github.com/adafruit/Adafruit_Python_BluefruitLE/blob/master/examples/uart_service.py
-#     """
-#     ble.clear_cached_data()
-#
-#     # Get the first available BLE network adapter and make sure it's powered on.
-#     adapter = ble.get_default_adapter()
-#     adapter.power_on()
-#     print('Using adapter: {0}'.format(adapter.name))
-#
-#     # Scan for UART devices.
-#     print('Searching for UART device...')
-#     try:
-#         adapter.start_scan()
-#         print("scan completed")
-#         # Search for the first UART device found (will time out after 60 seconds
-#         # but you can specify an optional timeout_sec parameter to change it).
-#         device = UART.find_device()
-#         if device is None:
-#             raise RuntimeError('Failed to find UART device!')
-#     finally:
-#         # Make sure scanning is stopped before exiting.
-#         adapter.stop_scan()
-#
-#     print('Connecting to device...')
-#     device.connect()  # Will time out after 60 seconds, specify timeout_sec parameter
-#     # to change the timeout.
-#
-#     try:
-#         # Wait for service discovery to complete for the UART service.  Will
-#         # time out after 60 seconds (specify timeout_sec parameter to override).
-#         print('Discovering services...')
-#         UART.discover(device)
-#
-#         # Once service discovery is complete create an instance of the service
-#         # and start interacting with it.
-#         uart = UART(device)
-#         return True, uart, device
-#     finally:
-#         # Make sure device is disconnected on exit.
-#         device.disconnect()
 
 
 def main():
@@ -254,8 +117,8 @@ def main():
 
     # Disconnect any currently connected UART devices.  Good for cleaning up and
     # starting from a fresh state.
-    # print('Disconnecting any connected UART devices...')
-    # UART.disconnect_devices()
+    print('Disconnecting any connected UART devices...')
+    UART.disconnect_devices()
 
     # Scan for UART devices.
     print('Searching for UART device...')
@@ -293,6 +156,7 @@ def main():
             try:
                 # if time elapsed >= update time
                 if (time.time() - async_state.last_reading) > sync_state_seconds:
+                    update_focused()
                     print("Waiting for update")
                     received_state = uart.read(timeout_sec=60)
                     print(received_state)
@@ -306,50 +170,5 @@ def main():
         device.disconnect()
 
 
-async def init_main():
-    """
-    https://python-osc.readthedocs.io/en/latest/server.html#async-server
-    https://web.archive.org/web/20170809181820/http://developer.choosemuse.com/research-tools-example/grabbing-data-from-museio-a-few-simple-examples-of-muse-osc-servers
-    https://addshore.com/2018/06/python3-using-some-shared-state-in-2-async-methods/
-    :return:
-    """
-    # making a super ghetto state to share b/w the two async contexts
-    # based on solution in https://addshore.com/2018/06/python3-using-some-shared-state-in-2-async-methods/
-    # async_state = type('', (), {})()
-    # async_state.focused = False
-    # async_state.mentally_focused = False
-    # async_state.wearing = False
-    # async_state.hat_running = False
-    # async_state.user_override = False
-    # async_state.last_reading = datetime.datetime.now()
-    # async_state.attention_lvl = 0.0
-
-    # Prepare the serial port
-    # make_connection
-    # ble.initialize()
-    # connection_made, uart_conn, device = make_connection()
-
-    # if connection_made:
-    # with the connection made and inital state set, can start the main loops.
-    # https://python-osc.readthedocs.io/en/latest/dispatcher.html
-    # https://python-osc.readthedocs.io/en/latest/server.html#async-server
-    event_loop_local = asyncio.get_event_loop()
-    dispatcher = Dispatcher()
-    dispatcher.map("/muse/elements/experimental/concentration", concentration_handler, async_state)
-    # creates an OSC server that's Async.
-    server = osc_server.AsyncIOOSCUDPServer((IP, OSC_PORT), dispatcher, event_loop_local)
-    transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
-
-    # await loop(uart_conn, device, async_state)  # Enter main loop of program.
-    ble.initialize()
-    ble.run_mainloop_with(main)
-
-    transport.close()  # Clean up server endpoint
-
-# ble.initialize()
-# asyncio.run(ble.run_mainloop_with(main))
-event_loop = asyncio.new_event_loop()
-asyncio.set_event_loop(event_loop)
-asyncio.run(init_main())  # run the main loop
-
-
+ble.initialize()
+ble.run_mainloop_with(main)

@@ -19,15 +19,15 @@ How-to turn the Thinking Cap on:
 5a. May need to re-pair the device. Go to the Bluetooth menu and click to connect, and confirm the number shared.
 6. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
-7. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
-7a. Add --preset 14 if using the preset 14 configuration file (or any other.)
-8. Think.
+7. On the "Outgoing" tab, enter in the IP and path of the OSC server (127.0.0.1 and 5005) plus UDP. Check Forward All Messages.
+8. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
+8a. Add --preset 14 if using the preset 14 configuration file (or any other.)
+9. Run local_osc.py.
+10. Think.
 
 ## Preparations:
 https://learn.adafruit.com/bluefruit-le-python-library/installation
 https://learn.adafruit.com/bluefruit-le-python-library/usage
-
-
 
 
 ## Components used:
@@ -167,3 +167,5 @@ Christmas break
 22. (-) Won't connect at the same time, if attempting to connect in the wrong order. Has to be: Feather first, brain scanner second. Doesn't seem to be any way to specify the device to connect to in the Adafruit package.
 23. (-) Vibrator issues still. My breadboard version and what I soldered don't work the same. Perfboard loses the juice. Re-soldered and fixed.
 24. (+) Added turn off the lights function for when hat isn't being worn. Everything working over serial, but BLE has some blocking. 
+25. (-) Concurrent connection still an issue. The main BLE thread doesn't release, so the OSC server which receives the data from the Muse never goes. Two loops that won't release.
+26. (+) Splitting the BLE code and the OSC code and just having the OSC write a float between 0 and 1 to a file, and the BLE code reads it.
