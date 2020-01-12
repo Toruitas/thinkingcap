@@ -17,7 +17,7 @@
 #include <ArduinoJson.h>
 
 StaticJsonDocument<JSON_OBJECT_SIZE(2)> sendToServerDoc;
-StaticJsonDocument<JSON_OBJECT_SIZE(2)> receiveFromServerDoc;
+StaticJsonDocument<JSON_OBJECT_SIZE(7)> receiveFromServerDoc;
 
 // state string/json variables
 String updateServerString = "";
@@ -120,9 +120,10 @@ void loop()
   // Forward from BLEUART to HW Serial
   while ( bleuart.available() )
   {
-//    updateFromServerString = bleuart.readString();
-//    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
+    updateFromServerString = bleuart.readString();
+    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
     Serial.println("This totally works");
+    Serial.println(updateFromServerString);
     sendState();
   }
 }

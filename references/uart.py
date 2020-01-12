@@ -25,7 +25,12 @@ ble = Adafruit_BluefruitLE.get_provider()
 
 send_this = {
     "banana":"rama",
-    "super":"fly"
+    "super":"fly",
+    "focused":True,
+    "mentally_focused":False,
+    "timestamp":12091239,
+    "this":"is_dumb",
+    "or":"isit"
 }
 
 # Main function implements the program logic so it can run in a background
@@ -77,10 +82,13 @@ def main():
         # and start interacting with it.
         uart = UART(device)
 
-        state_json = json.dumps(send_this)
-        # Write a string to the TX characteristic.
-        uart.write(state_json.encode())
-        print("Sent the state to the device.")
+        import time
+        for i in range(10):
+            state_json = json.dumps(send_this)
+            # Write a string to the TX characteristic.
+            uart.write(state_json.encode())
+            print("Sent the state to the device.")
+            time.sleep(1)
 
         # Now wait up to one minute to receive data from the device.
         print('Waiting up to 60 seconds to receive data from the device...')

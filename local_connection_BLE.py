@@ -66,7 +66,6 @@ def update_server_state(received_state: str):
 def update_client_state(uart_conn):
     """
     Update the Arduino client.
-    https://stackoverflow.com/questions/22275079/pyserial-write-wont-take-my-string
     :return:
     """
 
