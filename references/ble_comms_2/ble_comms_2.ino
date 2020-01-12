@@ -120,10 +120,25 @@ void loop()
   // Forward from BLEUART to HW Serial
   while ( bleuart.available() )
   {
-    updateFromServerString = bleuart.readString();
-    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
-    Serial.println("This totally works");
-    Serial.println(updateFromServerString);
+//    updateFromServerString = bleuart.readString();
+//    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
+//    Serial.println("This totally works");
+//    Serial.println(updateFromServerString);
+
+    char ch;
+    String cha;
+    ch = (char) bleuart.read();
+    cha = (String) ch;
+
+    if (cha == "{"){
+      updateFromServerString = cha;
+    }else if(cha == "}"){
+      DeserializationError err = deserializeJson(receiveFromServerDoc, cha);
+      updateFromServerString = updateFromServerString + cha;
+      Serial.println(updateFromServerString);
+    }else{
+      updateFromServerString = updateFromServerString + cha;
+    }
     sendState();
   }
 }

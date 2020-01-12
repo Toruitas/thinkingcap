@@ -50,7 +50,6 @@ int potReading = 0;
 // State string/json variables for state syncing.
 String updateServerString = "";
 String updateFromServerString = "";
-uint8_t buf[96];  // 96 should be enough to send the whole state. It's only 3 things...
 
 // BLE Service
 BLEDfu  bledfu;  // OTA DFU service
@@ -200,6 +199,7 @@ void sendState(){
   // Cast the JsonVariant to a string and send it over BLE.
   updateServerString = ""+sendToServerDoc.as<String>();
   
+  uint8_t buf[128];  // 128 should be enough to send the whole state. It's only 3 things...
   updateServerString.getBytes(buf,sizeof(buf));
   bleuart.write( buf,  sizeof(buf));
 }
@@ -211,40 +211,42 @@ void readState(){
   // Focused or Not.
   // https://www.youtube.com/watch?v=iuHxPQB6Rx4 for JSON parsing info. 
   updateFromServerString = bleuart.readString();
+  Serial.println(millis());
+  Serial.println(updateFromServerString.c_str()); 
 
-  if(updateFromServerString != ""){
-    // load updateFromServerString into the JSON doc receiveFromServerDoc
-    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
-  
-    // if parsing failed
-    if(err){
-      if(Serial.available()){
-        Serial.println("ERROR: ");
-        Serial.println(err.c_str());
-      }
-      return;
-    // if it succeeded
-    }else{
-      mentally_focused = receiveFromServerDoc["mentally_focused"];
-      // new focused state. 
-      if(mentally_focused == focused){
-        userOverride = false;
-      }else{
-        if(!userOverride){
-          if(mentally_focused != focused){
-            focused_prev = focused;
-            focused = mentally_focused;
-            vibrate();
-          }
-        }
-      }
-    }
-  
-    if(Serial.available()){
-      Serial.println(updateFromServerString); 
-    }
-  }
+//  if (updateFromServerString != ""){
+//
+//    // load updateFromServerString into the JSON doc receiveFromServerDoc
+//    DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);
+//  
+//    // if parsing failed
+//    if(err){
+//      if(Serial.available()){
+//        Serial.println("ERROR: ");
+//        Serial.println(err.c_str());
+//      }
+//      return;
+//    // if it succeeded
+//    }else{
+//      mentally_focused = receiveFromServerDoc["mentally_focused"];
+//      // new focused state. 
+//      if(mentally_focused == focused){
+//        userOverride = false;
+//      }else{
+//        if(!userOverride){
+//          if(mentally_focused != focused){
+//            focused_prev = focused;
+//            focused = mentally_focused;
+//            vibrate();
+//          }
+//        }
+//      }
+//    }
+//  }
+//  Serial.println(updateFromServerString); 
 }
+
+
 
 
 void readWearing(){
@@ -386,10 +388,8 @@ void loop(){
         sendState();
         startTime = currentTime;
       }
-//      while ( bleuart.available() )
-//      {
-//        readState();
-//      }
-    updateFromServerString = bleuart.readString();
+      readState();
     }
+  
+  
 }

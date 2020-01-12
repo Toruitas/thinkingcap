@@ -169,4 +169,5 @@ Christmas break
 24. (+) Added turn off the lights function for when hat isn't being worn. Everything working over serial, but BLE has some blocking. 
 25. (-) Concurrent connection still an issue. The main BLE thread doesn't release, so the OSC server which receives the data from the Muse never goes. Two loops that won't release.
 26. (+) Splitting the BLE code and the OSC code and just having the OSC write a float between 0 and 1 to a file, and the BLE code reads it.
-27. (-) And now for some reason, despite not touching the method, the Feather won't receive the JSON. Why? No memory.
+27. (+) Had a very hard to track down memory management issue with the JSON. But tis a solved thing, now.
+28. (-)
