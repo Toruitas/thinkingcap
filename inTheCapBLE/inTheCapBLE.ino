@@ -25,7 +25,7 @@ unsigned long currentTime = 0;  // timestamp which helps track elapsed time w/ s
 
 // LED variables
 int LED_PIN = 6;
-int LED_COUNT = 36;
+int LED_COUNT = 37;
 unsigned long ledStartTime = 0;
 unsigned long ledCurrentTime = 0;
 int SystemMinBrightness = 0;       //value 0-255 

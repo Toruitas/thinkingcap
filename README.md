@@ -1,4 +1,4 @@
-# Physical Computing Final Project Log - Week 1
+# Physical Computing Final Project Log
 Msc Creative Computing 2019
 Physical Computing 1 w/ Phoenix Perry
 By Stuart Leitch
@@ -11,28 +11,31 @@ The Thinking Cap is based off of a Muse 2014 headset.
 
 ## How to use:
 How-to turn the Thinking Cap on:
-1. Make sure Bluetooth is running on Linux for the Ard: ps aux | grep bluetoothd
+1. Make sure Bluetooth is running on Linux for the Ard: `ps aux | grep bluetoothd`
 2. Power on the Neopixels. Just plug them in.
 3. Power on the Feather. Just plug them in. If they're on while connecting to the Muse, the OSC server will connect to both.
-4. Run local_connection_BLE.py. Connect to the Feather.
+4. Run `local_connection_BLE.py`. Connect to the Feather.
 5. Turn the Muse on by pressing the Circular on/off button.
 5a. May need to re-pair the device. Go to the Bluetooth menu and click to connect, and confirm the number shared.
 6. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
 7. On the "Outgoing" tab, enter in the IP and path of the OSC server (127.0.0.1 and 5005) plus UDP. Check Forward All Messages.
 8. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
-8a. Add --preset 14 if using the preset 14 configuration file (or any other.)
-9. Run local_osc.py.
+8a. Add `--preset 14` if using the preset 14 configuration file (or any other.)
+9. Run `local_osc.py`. This could be done at any point, really.
 10. Think.
 
 ## Preparations:
 https://learn.adafruit.com/bluefruit-le-python-library/installation
 https://learn.adafruit.com/bluefruit-le-python-library/usage
 
-
 ## Components used:
 1. Adafruit Feather Bluefruit nRF52840 - 1
 2. GP2Y0A21YK0F SHARP IR Analog Distance Sensor (10-80cm) - 1
+
+## Things I'd improve
+1. Use a more near-range IR sensor.
+
 
 ## Week 1 (2019/10/28 - 2019/11/3):
 ### Challenge: Get Arduino and Muse talking to each other.
@@ -171,3 +174,5 @@ Christmas break
 26. (+) Splitting the BLE code and the OSC code and just having the OSC write a float between 0 and 1 to a file, and the BLE code reads it.
 27. (+) Had a very hard to track down memory management issue with the JSON. But tis a solved thing, now.
 28. (+) Had an even harder problem figuring out that blueart.readString is blocking for a whole second, and had to change to .read(), which required a whole rewrite of readState.
+29. (+) All assembled. Just need to replace the NOW DEAD 9V for tomorrow.
+30. 

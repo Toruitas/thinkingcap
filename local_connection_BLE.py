@@ -92,6 +92,9 @@ def update_focused():
     except pickle.UnpicklingError:
         # just can't open sometimes. Skip it and try later.
         return
+    except EOFError:
+        # just ignore
+        return
 
 
 def context_vars_to_state_dict(async_state) -> dict:
