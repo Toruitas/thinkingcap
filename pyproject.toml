@@ -10,7 +10,7 @@ pygatt = "^4.0.5"
 python-osc = "^1.7.4"
 Adafruit-BluefruitLE = "^0.9.10"
 dbus-python = "^1.2.12"
-PyGObject = "^3.34.0"
+requests = "^2.22.0"
 
 [tool.poetry.dev-dependencies]
 

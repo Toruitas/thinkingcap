@@ -25,6 +25,18 @@ How-to turn the Thinking Cap on:
 9. Run `local_osc.py`. This could be done at any point, really.
 10. Think.
 
+## Expected outputs:
+The server will output the following in a loop as it communicates with the BLE-enabled Thinking Cap.
+```
+Client state updated to: 
+{"connected": true, "focused": false, "hat_running": true, "last_reading": 1579023726.0234778, "mentally_focused": false, "user_override": false, "wearing": true}
+Waiting for update
+{"focused":false,"wearing":true,"userOverride":false}
+{'focused': False, 'wearing': True, 'userOverride': False}
+Server state updated to: 
+{'focused': False, 'mentally_focused': False, 'wearing': True, 'hat_running': True, 'connected': True, 'user_override': False, 'last_reading': 1579023726.273652}
+```
+
 ## Preparations:
 https://learn.adafruit.com/bluefruit-le-python-library/installation
 https://learn.adafruit.com/bluefruit-le-python-library/usage
@@ -33,7 +45,7 @@ https://learn.adafruit.com/bluefruit-le-python-library/usage
 1. Adafruit Feather Bluefruit nRF52840 - 1
 2. GP2Y0A21YK0F SHARP IR Analog Distance Sensor (10-80cm) - 1
 
-## Things I'd improve
+## Things I'd improve for this version.
 1. Use a more near-range IR sensor.
 
 
@@ -168,11 +180,18 @@ Christmas break
 20. (-) Feather isn't recognized on any ttyACM port after being unplugged while on battery. How annoying to test. It "unfreezes" when disconnected.
 21. (+) Bluetooth syncing of state now functional. Woo!
 22. (-) Won't connect at the same time, if attempting to connect in the wrong order. Has to be: Feather first, brain scanner second. Doesn't seem to be any way to specify the device to connect to in the Adafruit package.
-23. (-) Vibrator issues still. My breadboard version and what I soldered don't work the same. Perfboard loses the juice. Re-soldered and fixed.
+23. (-) Vibrator issues still. My breadboard version and what I soldered don't work the same. Perfboard loses the juice. Re-soldered and fixed. Includes the transistor.
 24. (+) Added turn off the lights function for when hat isn't being worn. Everything working over serial, but BLE has some blocking. 
 25. (-) Concurrent connection still an issue. The main BLE thread doesn't release, so the OSC server which receives the data from the Muse never goes. Two loops that won't release.
-26. (+) Splitting the BLE code and the OSC code and just having the OSC write a float between 0 and 1 to a file, and the BLE code reads it.
-27. (+) Had a very hard to track down memory management issue with the JSON. But tis a solved thing, now.
+26. (+) Split the BLE code and the OSC code and just having the OSC write a float between 0 and 1 to a file, and the BLE code reads it.
+27. (+) Had a very hard to track down memory management issue with the JSON. But 'tis a solved thing, now.
 28. (+) Had an even harder problem figuring out that blueart.readString is blocking for a whole second, and had to change to .read(), which required a whole rewrite of readState.
 29. (+) All assembled. Just need to replace the NOW DEAD 9V for tomorrow.
-30. 
+
+## Week 11 2020/1/13 - 2020/1/20
+1. (+) Added error handling on server for EOFError. Unfortunately, discovered during the presentation. Great timing.
+2. (+) Tried to reglue the Neopixels to the hat. It didn't take, so I just sewed it in.
+3. (+) Neopixels working again. Didn't touch them. Naturally.
+4. (+) Recorded a demo (thanks Mark) showing it working, including the brain wave reading.
+5. (+) Have some time, attempting (Slack integration)[https://api.slack.com/messaging/webhooks]. Registered this image to the app: ![Lego man from 16bit.com](http://16bit.com/fotd/fotd-pics/0260-lego-minifigures-Ringmaster.jpg)
+6. (+) 

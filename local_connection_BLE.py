@@ -2,7 +2,8 @@ import json
 import asyncio
 import time
 import pickle
-from contextvars import ContextVar
+import requests
+import random
 
 import Adafruit_BluefruitLE
 from Adafruit_BluefruitLE.services import UART
@@ -17,11 +18,62 @@ async_state.user_override = False
 async_state.last_reading = time.time()
 async_state.attention_lvl = 0.0
 
+slack_state = type('', (), {})()
+slack_state.focused_prev = False   # reduplication of some Arduino code
+slack_state.slack_do_update = False
+slack_state.slack_updated = time.time()
+slack_state.slack_update_period = 90  # 15 minutes is about right. Even 10 minutes feels too spammy.
+slack_state.slack_hooks_path = "https://hooks.slack.com/services/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"
+slack_state.username = "Stuart"
+
 sync_state_seconds = 0.250  # 250ms between updates. Same on the Arduino. BLE isn't as fast as Serial, evidently.
 pickle_path = ""
 
 # Get the BLE provider for the current platform.
 ble = Adafruit_BluefruitLE.get_provider()
+
+
+def update_slack():
+    """
+    https://stackoverflow.com/questions/11322430/how-to-send-post-request
+
+    This function only fires every so often.
+    It sends a message to Slack letting everybody in the channel know what kind of focused state you're in. Oh yes,
+    it's even worse than the open office. Now you can't even hide your brain.
+
+    :return:
+    """
+
+    # potential messages
+    slack_messages = {
+        "focused": [
+            {"text": f"{slack_state.username} is focused and working super hard!"},
+            {"text": f"@boss, take a look at {slack_state.username}. Just look at him go."},
+            {"text": f"{slack_state.username} is way too important to fire."},
+            {"text": f"{slack_state.username} is in the zone. Don't touch!"},
+            {"text": f"{slack_state.username} is a model worker. Look at him. ARE YOU THAT GOOD?!"},
+        ],
+        "unfocused": [
+            {"text": f"{slack_state.username} is open for watercooler conversations!"},
+            {"text": f"@boss, take a look at {slack_state.username}. Slacking again. "},
+            {"text": f"{slack_state.username}'s time is about up at this office."},
+            {"text": f"@{slack_state.username}, please see the boss for an evaluation."},
+            {"text": f"Why is {slack_state.username} even here? This is the productivity of a drunk chimp."},
+        ]
+    }
+    # choose the batch to randomly select from
+    if async_state.focused:
+        message_list = slack_messages["focused"]
+    else:
+        message_list = slack_messages["unfocused"]
+    message = random.choice(message_list)
+    try:
+        request = requests.post(slack_state.slack_hooks_path, json=message)
+        print("Slack updated!")
+        print(request.status_code, request.reason)
+    except:
+        # we don't want to block things, so... carry on, young script
+        return
 
 
 def update_server_state(received_state: str):
@@ -44,6 +96,9 @@ def update_server_state(received_state: str):
 
             async_state.hat_running = True
             async_state.connected = True
+            if received_state["focused"] != async_state.focused:
+                slack_state.focused_prev = async_state.focused
+                slack_state.slack_do_update = True
             async_state.focused = received_state["focused"]
             async_state.wearing = received_state["wearing"]
             async_state.user_override = received_state["userOverride"]
@@ -174,6 +229,10 @@ def main():
                         # connection made, update the variables
                         update_server_state(received_state)
                     update_client_state(uart)
+                if slack_state.slack_do_update:
+                    if time.time()-slack_state.slack_updated > slack_state.slack_update_period:
+                        update_slack()
+
             except RuntimeError:
                 device.disconnect()
     finally:
