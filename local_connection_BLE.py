@@ -5,6 +5,7 @@ import time
 import pickle
 import requests
 import random
+import serial
 
 import Adafruit_BluefruitLE
 from Adafruit_BluefruitLE.services import UART
@@ -24,8 +25,8 @@ async_state.running_focus_avg = []
 slack_state = type('', (), {})()
 slack_state.slack_do_update = False
 slack_state.slack_updated = time.time()
-slack_state.slack_update_period = 90  # 15 minutes is about right. Even 10 minutes feels too spammy.
-slack_state.slack_hooks_path = os.environ("SLACK_HOOKS_PATH")
+slack_state.slack_update_period = 10  # 15 minutes is about right. Even 10 minutes feels too spammy.
+slack_state.slack_hooks_path = os.environ["SLACK_HOOKS_PATH"]
 slack_state.username = "Stuart"
 slack_state.target_rate = 0.99
 
@@ -35,8 +36,12 @@ pickle_path = ""
 # Get the BLE provider for the current platform.
 ble = Adafruit_BluefruitLE.get_provider()
 
+# Serial for updating the Boss Box Bot
+ARD_PORT = "/dev/ttyACM0" # COM3 or /dev/ttyACM0
 
-def update_slack():
+
+
+def update_slack(ser):
     """
     https://stackoverflow.com/questions/11322430/how-to-send-post-request
 
@@ -44,9 +49,11 @@ def update_slack():
     It sends a message to Slack letting everybody in the channel know what kind of focused state you're in. Oh yes,
     it's even worse than the open office. Now you can't even hide your brain.
 
+    This also updates the Boss Box Bot.
+
     :return:
     """
-
+    slack_state.slack_do_update = False
     # potential messages
     slack_messages = {
         "focused": [
@@ -70,19 +77,33 @@ def update_slack():
     else:
         message_list = slack_messages["unfocused"]
     message = random.choice(message_list)
+
     # now add the running average to the message.
     # get the running average from the async_state.running_focus_avg
 
     concentration_rate = sum(async_state.running_focus_avg)/len(async_state.running_focus_avg)
 
-    message += f" Currently at a {concentration_rate} concentration rate. Compare that to the target of {slack_state.target_rate}, and use peer pressure appropriately."
-
+    message["text"] += f" Currently at a {concentration_rate} concentration rate. Compare that to the target of " \
+               f"{slack_state.target_rate}, and use peer pressure appropriately."
     try:
         request = requests.post(slack_state.slack_hooks_path, json=message)
         print("Slack updated!")
-        print(request.status_code, request.reason)
+        # print(request.status_code, request.reason)
     except:
         # we don't want to block things, so... carry on, young script
+        print("Failed to update Slack")
+        pass
+    # now update the BossBoxBot
+    state = {
+        "concentration_rate":concentration_rate,
+        "target":slack_state.target_rate
+    }
+    state_json = json.dumps(state)
+    try:
+        ser.write(state_json.encode())
+        print("Boss box bot updated")
+    except:
+        print("Failed to update Boss Bot Box")
         return
 
 
@@ -106,13 +127,15 @@ def update_server_state(received_state: str):
 
             async_state.hat_running = True
             async_state.connected = True
-            if received_state["focused"] != async_state.focused:
-                async_state.focused_prev = async_state.focused
-                slack_state.slack_do_update = True
+            async_state.focused_prev = async_state.focused
             async_state.focused = received_state["focused"]
             async_state.wearing = received_state["wearing"]
             async_state.user_override = received_state["userOverride"]
             async_state.last_reading = time.time()
+
+            # if there's a change in status
+            if async_state.focused != async_state.focused_prev:
+                slack_state.slack_do_update = True
 
             state_dict = context_vars_to_state_dict(async_state)
 
@@ -224,6 +247,7 @@ def main():
         # Once service discovery is complete create an instance of the service
         # and start interacting with it.
         uart = UART(device)
+        ser = serial.Serial(ARD_PORT, baudrate=9600, timeout=1)
 
         async_state.hat_running = True
         async_state.connected = True
@@ -242,7 +266,7 @@ def main():
                     update_client_state(uart)
                 if slack_state.slack_do_update:
                     if time.time()-slack_state.slack_updated > slack_state.slack_update_period:
-                        update_slack()
+                        update_slack(ser)
 
             except RuntimeError:
                 device.disconnect()
