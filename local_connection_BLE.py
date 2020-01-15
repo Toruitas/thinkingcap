@@ -77,6 +77,10 @@ def update_slack(ser):
         message_list = slack_messages["unfocused"]
     message = random.choice(message_list)
 
+    # special message for using the override to look focused.
+    if async_state.focused and not async_state.mentally_focused:
+        message["text"] += "Clearly hit the override for this time."
+
     # now add the running average to the message.
     # get the running average from the async_state.running_focus_avg
 
