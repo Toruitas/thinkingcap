@@ -7,7 +7,7 @@ double concentration_rate = 0.0;
 double target = 0.0;
 
 String updateFromServerString = "";
-StaticJsonDocument<JSON_OBJECT_SIZE(3)> receiveFromServerDoc;
+StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
 
 void setup() {
   // put your setup code here, to run once:
@@ -31,6 +31,7 @@ void loop() {
 void readState(){
   if (Serial.available()){
     updateFromServerString = Serial.readString();
+    Serial.println(updateFromServerString);
 
     if(updateFromServerString){
       DeserializationError err = deserializeJson(receiveFromServerDoc, updateFromServerString);

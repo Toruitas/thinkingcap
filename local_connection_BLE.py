@@ -40,7 +40,6 @@ ble = Adafruit_BluefruitLE.get_provider()
 ARD_PORT = "/dev/ttyACM0" # COM3 or /dev/ttyACM0
 
 
-
 def update_slack(ser):
     """
     https://stackoverflow.com/questions/11322430/how-to-send-post-request
@@ -95,8 +94,8 @@ def update_slack(ser):
         pass
     # now update the BossBoxBot
     state = {
-        "concentration_rate":concentration_rate,
-        "target":slack_state.target_rate
+        "concentration_rate": concentration_rate,
+        "target": slack_state.target_rate
     }
     state_json = json.dumps(state)
     try:
@@ -247,7 +246,7 @@ def main():
         # Once service discovery is complete create an instance of the service
         # and start interacting with it.
         uart = UART(device)
-        ser = serial.Serial(ARD_PORT, baudrate=9600, timeout=1)
+        ser = serial.Serial(ARD_PORT, baudrate=9600, timeout=0.05)
 
         async_state.hat_running = True
         async_state.connected = True
@@ -267,9 +266,15 @@ def main():
                 if slack_state.slack_do_update:
                     if time.time()-slack_state.slack_updated > slack_state.slack_update_period:
                         update_slack(ser)
-
             except RuntimeError:
                 device.disconnect()
+
+
+            # sanity check for seeing response on the BossBotBox.
+            ard_resp = ser.readline()
+            if ard_resp != b'\r\n' and ard_resp != b'Updating from server\r\n' and ard_resp != b'':
+                print(ard_resp)
+                # time.sleep(3)
     finally:
         device.disconnect()
 
