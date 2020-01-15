@@ -3,3 +3,4 @@ __pycache__/*
 .vscode/*
 .idea/*
 creds.txt*
+SLACK_HOOKS_PATH.txt

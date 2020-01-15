@@ -1,5 +1,6 @@
 import json
 import asyncio
+import os
 import time
 import pickle
 import requests
@@ -10,6 +11,7 @@ from Adafruit_BluefruitLE.services import UART
 
 async_state = type('', (), {})()
 async_state.focused = False
+async_state.focused_prev = False   # reduplication of some Arduino code
 async_state.connected = False
 async_state.mentally_focused = False
 async_state.wearing = False
@@ -17,14 +19,15 @@ async_state.hat_running = False
 async_state.user_override = False
 async_state.last_reading = time.time()
 async_state.attention_lvl = 0.0
+async_state.running_focus_avg = []
 
 slack_state = type('', (), {})()
-slack_state.focused_prev = False   # reduplication of some Arduino code
 slack_state.slack_do_update = False
 slack_state.slack_updated = time.time()
 slack_state.slack_update_period = 90  # 15 minutes is about right. Even 10 minutes feels too spammy.
-slack_state.slack_hooks_path = "https://hooks.slack.com/services/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"
+slack_state.slack_hooks_path = os.environ("SLACK_HOOKS_PATH")
 slack_state.username = "Stuart"
+slack_state.target_rate = 0.99
 
 sync_state_seconds = 0.250  # 250ms between updates. Same on the Arduino. BLE isn't as fast as Serial, evidently.
 pickle_path = ""
@@ -55,7 +58,7 @@ def update_slack():
         ],
         "unfocused": [
             {"text": f"{slack_state.username} is open for watercooler conversations!"},
-            {"text": f"@boss, take a look at {slack_state.username}. Slacking again. "},
+            {"text": f"@boss, take a look at {slack_state.username}. Slacking again."},
             {"text": f"{slack_state.username}'s time is about up at this office."},
             {"text": f"@{slack_state.username}, please see the boss for an evaluation."},
             {"text": f"Why is {slack_state.username} even here? This is the productivity of a drunk chimp."},
@@ -67,6 +70,13 @@ def update_slack():
     else:
         message_list = slack_messages["unfocused"]
     message = random.choice(message_list)
+    # now add the running average to the message.
+    # get the running average from the async_state.running_focus_avg
+
+    concentration_rate = sum(async_state.running_focus_avg)/len(async_state.running_focus_avg)
+
+    message += f" Currently at a {concentration_rate} concentration rate. Compare that to the target of {slack_state.target_rate}, and use peer pressure appropriately."
+
     try:
         request = requests.post(slack_state.slack_hooks_path, json=message)
         print("Slack updated!")
@@ -97,7 +107,7 @@ def update_server_state(received_state: str):
             async_state.hat_running = True
             async_state.connected = True
             if received_state["focused"] != async_state.focused:
-                slack_state.focused_prev = async_state.focused
+                async_state.focused_prev = async_state.focused
                 slack_state.slack_do_update = True
             async_state.focused = received_state["focused"]
             async_state.wearing = received_state["wearing"]
@@ -138,6 +148,7 @@ def update_focused():
         with open(pickle_path+'concentration.pkl', 'rb') as pickle_file:
             concentration_dict = pickle.load(pickle_file)
         concentration_level = concentration_dict["concentration"]
+        async_state.running_focus_avg.append(concentration_level)
         if concentration_level > 0.5:
             async_state.mentally_focused = True
         else:

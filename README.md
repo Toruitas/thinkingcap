@@ -194,4 +194,5 @@ Christmas break
 3. (+) Neopixels working again. Didn't touch them. Naturally.
 4. (+) Recorded a demo (thanks Mark) showing it working, including the brain wave reading.
 5. (+) Have some time, attempting (Slack integration)[https://api.slack.com/messaging/webhooks]. Registered this image to the app: ![Lego man from 16bit.com](http://16bit.com/fotd/fotd-pics/0260-lego-minifigures-Ringmaster.jpg)
-6. (+) 
+6. (-) Accidentally committed the Webhooks URL to GitHub. Rookie mistake. That URL has been disabled and a new one made, which is now accessed through environment variables.
+
