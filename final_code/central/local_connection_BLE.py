@@ -210,7 +210,7 @@ def context_vars_to_state_dict(async_state) -> dict:
 
 def main():
     """
-    Much of the code in this method is from the Adafruit Python BLE documentaiton.
+    Much of the code in this method is from the Adafruit Python BLE examples. See the references directory in this repo.
     :return:
     """
     # Clear any cached data because both bluez and CoreBluetooth have issues with

@@ -3,20 +3,23 @@ Msc Creative Computing 2019
 Physical Computing 1 w/ Phoenix Perry
 By Stuart Leitch
 
-## Background
-
+## Background:
 The "Thinking Cap" is meant to be an attention-preservation device. It is a brain-computer-interface that monitors brain waves, and notes when there are periods of attention on one thing, or this attention changes to something else.
 
 The Thinking Cap is based off of a Muse 2014 headset.
 
 The BossBotBox accompanies the Thinking Cap, providing feedback from the management that makes the employee wear the Thinking Cap.
 
-## External links
+## For grading:
+The code for grading is in the directory "final_code".
+Everything else is a mixture of intermediate steps, references, documentation, etc. 
+
+## External links:
 1. GitHub: https://github.com/Toruitas/thinkingcap
 2. YouTube: https://youtu.be/MygsSMPjsX8
 
 ## How to use:
-How-to turn the Thinking Cap on: i am an amazing coder oh yeah oh yeah. 
+How-to turn the Thinking Cap on: 
 1. Make sure Bluetooth is running on Linux for the Ard: `ps aux | grep bluetoothd`
 2. Power on the Neopixels. Just plug them in.
 3. Power on the Feather. Just plug them in. If they're on while connecting to the Muse, the OSC server will connect to both.
@@ -127,7 +130,8 @@ https://learn.adafruit.com/bluefruit-le-python-library/usage
 null
 
 ## Week 5 (2019/12/2 - 2019/12/8):
-1. (+) Test the fit of the Muse and the tophat. It's actually a better fit with the tophat than without. ![Test fit](img/wk5/0_muse_fit.JPG)
+1. (+) Test the fit of the Muse and the tophat. It's actually a better fit with the tophat than without. 
+![Test fit](img/wk5/0_muse_fit.JPG)
 
 ## Week 6 (2019/12/9 - 2019/12/15):
 ### Challenge: Infrared sensor.
@@ -147,7 +151,8 @@ https://www.instructables.com/id/Arduino-Potentiometer-Analog-Input-Tinkercad/ h
 2. (+) Finalized User Override button functionality on Ard. 
 3. (+) Finalized state sharing between Arduino and Machine
 4. (+) Finalized EEG reader Concentration reading. Effectively, this means that now the EEG reader can control the Focused state on the Arduino - and thus all the lights etc. Server-side code is essentially done now.
-5. (+) First new IR sensor has arrived. This is the better of the two. ![new IR](img/wk7/0_new_IR_sensor.JPG)
+5. (+) First new IR sensor has arrived. This is the better of the two. 
+![new IR](img/wk7/0_new_IR_sensor.JPG)
 
 ## Week 8 (2019/12/23 - 2019/12/29)
 Christmas break
@@ -157,9 +162,11 @@ Christmas break
 1. (+) Third kind of IR sensor arrived.
 2. (+) Located nRF52 Bluefruit Feather open source circuit diagrams for Eagle on GitHub: [https://github.com/adafruit/Adafruit-nRF52-Bluefruit-Feather-PCB](https://github.com/adafruit/Adafruit-nRF52-Bluefruit-Feather-PCB)
 3. (+) Comparison between the 2 batteries confirmed that the Adafruit-sold LiPo battery has flipped polarity compared to the CoolComponents one. This is what fried the first Bluefruit. I will re-do the wiring and use it to independently power the Neopixel. I'm not sure which battery is "incorrect."
-4. (+) First circuit drawn on Eagle. The override button! ![First circ](img/wk9/0_first_circ.png)
+4. (+) First circuit drawn on Eagle. The override button! 
+![First circ](img/wk9/0_first_circ.png)
 5. (+) The Sharp IR sensor works well enough. It's meant to work on 5v, but it does get accurate enough readings on 3.3v to suit my purposes. Plus it has nice mounting holes for screws.
-6. (+) Added IR sensor to Eagle schematic. ![Second circ](img/wk9/1_IR_sensor.png)
+6. (+) Added IR sensor to Eagle schematic. 
+![Second circ](img/wk9/1_IR_sensor.png)
 7. (+) Complete the Neopixels breathing animation code. 
 8. (-) Discover that the LiPo battery, despite its size, doesn't supply enough juice to color all the green LEDs I need. Have to rely on the 9V battery. It is, of course, very bright now.
 9. (+) Added the Neopixels circuit to the Eagle diagram.
@@ -172,12 +179,14 @@ Christmas break
 ### Challenge: Get the whole thing functional
 1. (-) Soldered on the green perf board. It's a major pain to make connections between the holes. I'm unable for now to get consistent current through what I draw.
 2. (+) Switched to strip board. The copper that exists already is much better than my cobbled-together circuits. I also switched to using female headers on it, as Tom said they give a better quality of connection.
-3. (+) Discovered current tophat not deep enough. Ordered another one! Taller. ![2 hats](img/wk10/2_hats.JPG)
+3. (+) Discovered current tophat not deep enough. Ordered another one! Taller. 
+![2 hats](img/wk10/2_hats.JPG)
 4. (+) Updated schematic to reflect removal of the 2x 220 ohm resistors. They're distorting the signal, rather than preventing distortion. I left them on the perf board, just will not use them. Instead I will connect them directly, as Tom said the Neopixels don't really need them.
 5. (+) Final perfboard completed. It doesn't actually have that many components soldered to it. Didn't really need it.
 6. (+) Tested the new battery. After a moment of shock (remedied by installing Blinky on the machine so I could actually see some response), it works!
 7. (-) The current supplied over the GPIO pins on the Feather are insufficient to make the vibrators vibrate. 12mA max, 8mA recommended. The vibes work at about 20mA. Must find some way to make them go. There's enough voltage, at least.
-8. (+) I tested using an NPN transistor linked to the main Arduino power supply. Works like a charm! ![with transistor](img/wk10/1_making_transistor_circuit.jpeg)
+8. (+) I tested using an NPN transistor linked to the main Arduino power supply. Works like a charm! 
+![with transistor](img/wk10/1_making_transistor_circuit.jpeg)
 9. (-) No coin vibrators in Eagle's libraries. Including Adafruit and Sparkfun. Seems like a big thing to miss.
 10. (+) Found a similar one from https://www.snapeda.com/home/ that works well enough.
 11. (+) Updated vibration code to be non-blocking. Removed the delay and added milli() math instead. Split into 2 functions called separately. 
@@ -198,7 +207,8 @@ Christmas break
 26. (+) Split the BLE code and the OSC code and just having the OSC write a float between 0 and 1 to a file, and the BLE code reads it.
 27. (+) Had a very hard to track down memory management issue with the JSON. But 'tis a solved thing, now.
 28. (+) Had an even harder problem figuring out that blueart.readString is blocking for a whole second, and had to change to .read(), which required a whole rewrite of readState.
-29. (+) All assembled. Just need to replace the NOW DEAD 9V for tomorrow. ![putting together](img/wk10/3_assembly.JPG) ![inner wiring](img/wk10/4_all_together.JPG)
+29. (+) All assembled. Just need to replace the NOW DEAD 9V for tomorrow. 
+![putting together](img/wk10/3_assembly.JPG) ![inner wiring](img/wk10/4_all_together.JPG)
 
 ## Week 11 2020/1/13 - 2020/1/20
 1. (+) Added error handling on server for EOFError. Unfortunately, discovered during the presentation. Great timing.
@@ -207,8 +217,10 @@ Christmas break
 4. (+) Recorded a demo (thanks Mark) showing it working, including the brain wave reading.
 5. (+) Have some time, attempting (Slack integration)[https://api.slack.com/messaging/webhooks]. Registered this image to the app: ![Lego man from 16bit.com](img/wk11/0260-lego-minifigures-Ringmaster.jpg)
 6. (-) Accidentally committed the Webhooks URL to GitHub. Rookie mistake. That URL has been disabled and a new one made, which is now accessed through environment variables.
-7. (+) Slack reactivated. ![slack msg](img/wk11/0_slack.PNG)
-8. (+) Envisioned, coded, 3D printed, and gave personality to the BossBotBox. ![BBB insides](img/wk11/BBB_insides.JPG) 
+7. (+) Slack reactivated. 
+![slack msg](img/wk11/0_slack.PNG)
+8. (+) Envisioned, coded, 3D printed, and gave personality to the BossBotBox. 
+![BBB insides](img/wk11/BBB_insides.JPG) 
 9. (+) Added placeholder animation for BossBotBox for the video.
 10. (+) Storyboarded the video.
 11. (+) Discovered the culrpit behind the signal getting thrown for the Neopixels. The potentiometer ground keeps coming loose. Swapped for a tighter cable.
