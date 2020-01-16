@@ -10,7 +10,7 @@ The "Thinking Cap" is meant to be an attention-preservation device. It is a brai
 The Thinking Cap is based off of a Muse 2014 headset.
 
 ## How to use:
-How-to turn the Thinking Cap on:
+How-to turn the Thinking Cap on: i am an amazing coder oh yeah oh yeah. 
 1. Make sure Bluetooth is running on Linux for the Ard: `ps aux | grep bluetoothd`
 2. Power on the Neopixels. Just plug them in.
 3. Power on the Feather. Just plug them in. If they're on while connecting to the Muse, the OSC server will connect to both.
@@ -198,3 +198,5 @@ Christmas break
 7. (+) Slack reactivated.
 8. (+) Envisioned, coded, 3D printed, and gave personality to the BossBotBox.
 9. (+) Added placeholder animation for BossBotBox for the video.
+10. (+) Storyboarded the video.
+11. (+) Discovered the culrpit behind the signal getting thrown for the Neopixels. The potentiometer ground keeps coming loose. Swapped for a tighter cable.

@@ -4,7 +4,7 @@ int RED_PIN = 5;
 int YELLOW_PIN = 6;
 int GREEN_PIN = 9;
 double concentration_rate = 0.0;
-double target = 0.0;
+double target = 50.0;
 
 String updateFromServerString = "";
 StaticJsonDocument<JSON_OBJECT_SIZE(6)> receiveFromServerDoc;
@@ -19,7 +19,7 @@ void setup() {
   pinMode(GREEN_PIN, OUTPUT);
 
   digitalWrite(GREEN_PIN, LOW);
-  digitalWrite(YELLOW_PIN, LOW);
+  digitalWrite(YELLOW_PIN, HIGH);
   digitalWrite(RED_PIN, LOW);
 }
 

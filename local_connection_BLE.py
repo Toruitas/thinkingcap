@@ -25,7 +25,7 @@ async_state.running_focus_avg = []
 slack_state = type('', (), {})()
 slack_state.slack_do_update = False
 slack_state.slack_updated = time.time()
-slack_state.slack_update_period = 10  # 15 minutes is about right. Even 10 minutes feels too spammy.
+slack_state.slack_update_period = 10  # 900 seconds = 15 minutes is about right. Even 10 minutes feels too spammy.
 slack_state.slack_hooks_path = os.environ["SLACK_HOOKS_PATH"]
 slack_state.username = "Stuart"
 slack_state.target_rate = 0.99
@@ -83,8 +83,10 @@ def update_slack(ser):
 
     # now add the running average to the message.
     # get the running average from the async_state.running_focus_avg
-
-    concentration_rate = sum(async_state.running_focus_avg)/len(async_state.running_focus_avg)
+    if len(async_state.running_focus_avg)>0:
+        concentration_rate = sum(async_state.running_focus_avg)/len(async_state.running_focus_avg)
+    else:
+        concentration_rate = "mystery"
 
     message["text"] += f" Currently at a {concentration_rate} concentration rate. Compare that to the target of " \
                f"{slack_state.target_rate}, and use peer pressure appropriately."
