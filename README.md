@@ -14,16 +14,17 @@ How-to turn the Thinking Cap on: i am an amazing coder oh yeah oh yeah.
 1. Make sure Bluetooth is running on Linux for the Ard: `ps aux | grep bluetoothd`
 2. Power on the Neopixels. Just plug them in.
 3. Power on the Feather. Just plug them in. If they're on while connecting to the Muse, the OSC server will connect to both.
-4. Run `local_connection_BLE.py`. Connect to the Feather.
-5. Turn the Muse on by pressing the Circular on/off button.
-5a. May need to re-pair the device. Go to the Bluetooth menu and click to connect, and confirm the number shared.
-6. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
+4. Export the Slack URL to environment variables. 
+5. Run `local_connection_BLE.py`. Connect to the Feather.
+6. Turn the Muse on by pressing the Circular on/off button.
+6a. May need to re-pair the device. Go to the Bluetooth menu and click to connect, and confirm the number shared.
+7. Start MuseLab with `MuseLab` and load the configuration file `muselab_configuration.json`
     Note: The axis is buggy on the second row at the moment. Will fix that in config file later.
-7. On the "Outgoing" tab, enter in the IP and path of the OSC server (127.0.0.1 and 5005) plus UDP. Check Forward All Messages.
-8. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
-8a. Add `--preset 14` if using the preset 14 configuration file (or any other.)
-9. Run `local_osc.py`. This could be done at any point, really.
-10. Think.
+8. On the "Outgoing" tab, enter in the IP and path of the OSC server (127.0.0.1 and 5005) plus UDP. Check Forward All Messages.
+9. Once MuseLab is running, pair it with muse-io on Ubuntu: `muse-io --osc osc.udp://127.0.0.1:5000 --device 00:06:66:67:0B:0C` 
+9a. Add `--preset 14` if using the preset 14 configuration file (or any other.)
+10. Run `local_osc.py`. This could be done at any point, really.
+11. Think. Watch the BossBoxBot for reactions.
 
 ## Expected outputs:
 The server will output the following in a loop as it communicates with the BLE-enabled Thinking Cap.
@@ -160,12 +161,12 @@ Christmas break
 ### Challenge: Get the whole thing functional
 1. (-) Soldered on the green perf board. It's a major pain to make connections between the holes. I'm unable for now to get consistent current through what I draw.
 2. (+) Switched to strip board. The copper that exists already is much better than my cobbled-together circuits. I also switched to using female headers on it, as Tom said they give a better quality of connection.
-3. (+) Discovered current tophat not deep enough. Ordered another one! Taller.
+3. (+) Discovered current tophat not deep enough. Ordered another one! Taller. ![2 hats](img/wk10/2_hats.JPG)
 4. (+) Updated schematic to reflect removal of the 2x 220 ohm resistors. They're distorting the signal, rather than preventing distortion. I left them on the perf board, just will not use them. Instead I will connect them directly, as Tom said the Neopixels don't really need them.
 5. (+) Final perfboard completed. It doesn't actually have that many components soldered to it. Didn't really need it.
 6. (+) Tested the new battery. After a moment of shock (remedied by installing Blinky on the machine so I could actually see some response), it works!
 7. (-) The current supplied over the GPIO pins on the Feather are insufficient to make the vibrators vibrate. 12mA max, 8mA recommended. The vibes work at about 20mA. Must find some way to make them go. There's enough voltage, at least.
-8. (+) I tested using an NPN transistor linked to the main Arduino power supply. Works like a charm! 
+8. (+) I tested using an NPN transistor linked to the main Arduino power supply. Works like a charm! ![with transistor](img/wk10/1_making_transistor_circuit.jpeg)
 9. (-) No coin vibrators in Eagle's libraries. Including Adafruit and Sparkfun. Seems like a big thing to miss.
 10. (+) Found a similar one from https://www.snapeda.com/home/ that works well enough.
 11. (+) Updated vibration code to be non-blocking. Removed the delay and added milli() math instead. Split into 2 functions called separately. 
@@ -176,7 +177,7 @@ Christmas break
 16. (-) Second 3D print failure. So bendy. And non-sticky. Weird. At least I got far enough this time to know I need to adjust all my holes by about 1mm wherever there's a hole. 
 17. (+) Can confirm that bluetooth sending and receiving of my JSON works. Random garbled characters come over the signal, though. Ñ ÅKéB4} Since it's at the end of the string, I can just throw them away and rebuild the JSON for loading.
 18. (-) Infrared library doesn't compile for the Feather Express. Does for Leonardo. Problem in the library, not my code.
-19. (+) In a true hacker move, I updated the IR library and now it works. Magic. Constant 8's, as intended.
+19. (+) In a true hacker move, I updated the IR library and now it works. Magic. Constant 8's, as intended. Changes committed to this repo.
 20. (-) Feather isn't recognized on any ttyACM port after being unplugged while on battery. How annoying to test. It "unfreezes" when disconnected.
 21. (+) Bluetooth syncing of state now functional. Woo!
 22. (-) Won't connect at the same time, if attempting to connect in the wrong order. Has to be: Feather first, brain scanner second. Doesn't seem to be any way to specify the device to connect to in the Adafruit package.
@@ -186,7 +187,7 @@ Christmas break
 26. (+) Split the BLE code and the OSC code and just having the OSC write a float between 0 and 1 to a file, and the BLE code reads it.
 27. (+) Had a very hard to track down memory management issue with the JSON. But 'tis a solved thing, now.
 28. (+) Had an even harder problem figuring out that blueart.readString is blocking for a whole second, and had to change to .read(), which required a whole rewrite of readState.
-29. (+) All assembled. Just need to replace the NOW DEAD 9V for tomorrow.
+29. (+) All assembled. Just need to replace the NOW DEAD 9V for tomorrow. ![putting together](img/wk10/3_assembly.JPG) ![inner wiring](img/wk10/4_all_together.JPG)
 
 ## Week 11 2020/1/13 - 2020/1/20
 1. (+) Added error handling on server for EOFError. Unfortunately, discovered during the presentation. Great timing.
@@ -195,8 +196,14 @@ Christmas break
 4. (+) Recorded a demo (thanks Mark) showing it working, including the brain wave reading.
 5. (+) Have some time, attempting (Slack integration)[https://api.slack.com/messaging/webhooks]. Registered this image to the app: ![Lego man from 16bit.com](http://16bit.com/fotd/fotd-pics/0260-lego-minifigures-Ringmaster.jpg)
 6. (-) Accidentally committed the Webhooks URL to GitHub. Rookie mistake. That URL has been disabled and a new one made, which is now accessed through environment variables.
-7. (+) Slack reactivated.
-8. (+) Envisioned, coded, 3D printed, and gave personality to the BossBotBox.
+7. (+) Slack reactivated. ![slack msg](img/wk11/0_slack.PNG)
+8. (+) Envisioned, coded, 3D printed, and gave personality to the BossBotBox. ![BBB insides](img/wk11/BBB_insides.JPG) 
 9. (+) Added placeholder animation for BossBotBox for the video.
 10. (+) Storyboarded the video.
 11. (+) Discovered the culrpit behind the signal getting thrown for the Neopixels. The potentiometer ground keeps coming loose. Swapped for a tighter cable.
+12. (+) Filmed everything and assembled, uploaded to YouTube. (Thinking Cap Presentation - Business Corp version)[https://youtu.be/MygsSMPjsX8 ].
+13. (+) Revised presentation to match new Business Corp dystopian theme.
+14. (+) Final product:
+![slack msg](img/wk11/TC_BBB.JPG)
+Final schematic:
+![slack msg](img/wk11/TCBBB_Schem.png)
