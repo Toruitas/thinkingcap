@@ -197,3 +197,4 @@ Christmas break
 6. (-) Accidentally committed the Webhooks URL to GitHub. Rookie mistake. That URL has been disabled and a new one made, which is now accessed through environment variables.
 7. (+) Slack reactivated.
 8. (+) Envisioned, coded, 3D printed, and gave personality to the BossBotBox.
+9. (+) Added placeholder animation for BossBotBox for the video.
