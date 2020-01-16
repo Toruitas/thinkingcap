@@ -9,6 +9,12 @@ The "Thinking Cap" is meant to be an attention-preservation device. It is a brai
 
 The Thinking Cap is based off of a Muse 2014 headset.
 
+The BossBotBox accompanies the Thinking Cap, providing feedback from the management that makes the employee wear the Thinking Cap.
+
+## External links
+1. GitHub: https://github.com/Toruitas/thinkingcap
+2. YouTube: https://youtu.be/MygsSMPjsX8
+
 ## How to use:
 How-to turn the Thinking Cap on: i am an amazing coder oh yeah oh yeah. 
 1. Make sure Bluetooth is running on Linux for the Ard: `ps aux | grep bluetoothd`
@@ -43,11 +49,16 @@ https://learn.adafruit.com/bluefruit-le-python-library/installation
 https://learn.adafruit.com/bluefruit-le-python-library/usage
 
 ## Components used:
-1. Adafruit Feather Bluefruit nRF52840 - 1
+1. Adafruit Feather Bluefruit nRF52840 - 2
 2. GP2Y0A21YK0F SHARP IR Analog Distance Sensor (10-80cm) - 1
+3. Coin vibrators - 2
+4. Adafruit Neopixel strip (37 LEDs) - 1
+5. Potentiometer - 1
+6. Button - 1
+7. LEDs - 3
 
 ## Things I'd improve for this version.
-1. Use a more near-range IR sensor.
+1. Use a more near-range IR sensor. Current is on the edge of perception.
 
 
 ## Week 1 (2019/10/28 - 2019/11/3):
@@ -194,14 +205,14 @@ Christmas break
 2. (+) Tried to reglue the Neopixels to the hat. It didn't take, so I just sewed it in.
 3. (+) Neopixels working again. Didn't touch them. Naturally.
 4. (+) Recorded a demo (thanks Mark) showing it working, including the brain wave reading.
-5. (+) Have some time, attempting (Slack integration)[https://api.slack.com/messaging/webhooks]. Registered this image to the app: ![Lego man from 16bit.com](http://16bit.com/fotd/fotd-pics/0260-lego-minifigures-Ringmaster.jpg)
+5. (+) Have some time, attempting (Slack integration)[https://api.slack.com/messaging/webhooks]. Registered this image to the app: ![Lego man from 16bit.com](img/wk11/0260-lego-minifigures-Ringmaster.jpg)
 6. (-) Accidentally committed the Webhooks URL to GitHub. Rookie mistake. That URL has been disabled and a new one made, which is now accessed through environment variables.
 7. (+) Slack reactivated. ![slack msg](img/wk11/0_slack.PNG)
 8. (+) Envisioned, coded, 3D printed, and gave personality to the BossBotBox. ![BBB insides](img/wk11/BBB_insides.JPG) 
 9. (+) Added placeholder animation for BossBotBox for the video.
 10. (+) Storyboarded the video.
 11. (+) Discovered the culrpit behind the signal getting thrown for the Neopixels. The potentiometer ground keeps coming loose. Swapped for a tighter cable.
-12. (+) Filmed everything and assembled, uploaded to YouTube. (Thinking Cap Presentation - Business Corp version)[https://youtu.be/MygsSMPjsX8 ].
+12. (+) Filmed everything and assembled, uploaded to YouTube. (Thinking Cap Presentation - Business Corp version)[https://youtu.be/MygsSMPjsX8].
 13. (+) Revised presentation to match new Business Corp dystopian theme.
 14. (+) Final product:
 ![slack msg](img/wk11/TC_BBB.JPG)

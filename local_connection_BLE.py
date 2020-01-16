@@ -1,5 +1,4 @@
 import json
-import asyncio
 import os
 import time
 import pickle
@@ -10,7 +9,7 @@ import serial
 import Adafruit_BluefruitLE
 from Adafruit_BluefruitLE.services import UART
 
-async_state = type('', (), {})()
+async_state = type('', (), {})()  # create an object for async state
 async_state.focused = False
 async_state.focused_prev = False   # reduplication of some Arduino code
 async_state.connected = False
@@ -22,7 +21,7 @@ async_state.last_reading = time.time()
 async_state.attention_lvl = 0.0
 async_state.running_focus_avg = []
 
-slack_state = type('', (), {})()
+slack_state = type('', (), {})()  # create an object for slack state
 slack_state.slack_do_update = False
 slack_state.slack_updated = time.time()
 slack_state.slack_update_period = 10  # 900 seconds = 15 minutes is about right. Even 10 minutes feels too spammy.
@@ -210,6 +209,10 @@ def context_vars_to_state_dict(async_state) -> dict:
 
 
 def main():
+    """
+    Much of the code in this method is from the Adafruit Python BLE documentaiton.
+    :return:
+    """
     # Clear any cached data because both bluez and CoreBluetooth have issues with
     # caching data and it going stale.
     ble.clear_cached_data()
@@ -274,7 +277,6 @@ def main():
                         update_slack(ser)
             except RuntimeError:
                 device.disconnect()
-
 
             # sanity check for seeing response on the BossBotBox.
             ard_resp = ser.readline()
