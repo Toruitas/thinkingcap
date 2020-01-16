@@ -4,3 +4,4 @@ __pycache__/*
 .idea/*
 creds.txt*
 SLACK_HOOKS_PATH.txt
+thinkingcap_logs_complete.pdf
